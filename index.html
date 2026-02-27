@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkyStream</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080810;
+  --bg2: #0d0d1a;
+  --surface: #111122;
+  --surface2: #181830;
+  --surface3: #1e1e38;
+  --border: rgba(255,255,255,.07);
+  --border2: rgba(255,255,255,.12);
+  --accent: #6c63ff;
+  --accent-h: #8a84ff;
+  --cyan: #00d4ff;
+  --green: #00e5a0;
+  --red: #ff4757;
+  --yellow: #ffd32a;
+  --text: #f0f0ff;
+  --text2: #a0a0c0;
+  --text3: #606080;
+  --font: 'Outfit', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --radius: 12px;
+  --sidebar-w: 220px;
+  --header-h: 60px;
+}
+[data-theme="light"] {
+  --bg: #f5f5fa;
+  --bg2: #ebebf5;
+  --surface: #ffffff;
+  --surface2: #f0f0f8;
+  --surface3: #e8e8f5;
+  --border: rgba(0,0,0,.08);
+  --border2: rgba(0,0,0,.15);
+  --text: #0d0d20;
+  --text2: #404060;
+  --text3: #9090b0;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:10px}
+
+/* BACKGROUND MESH */
+body::before{
+  content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse 50% 60% at 10% 0%,rgba(108,99,255,.12),transparent 60%),
+             radial-gradient(ellipse 40% 50% at 90% 100%,rgba(0,212,255,.07),transparent 60%);
+  pointer-events:none;z-index:0;
+}
+
+/* LAYOUT */
+#app{display:flex;flex-direction:column;height:100vh;position:relative;z-index:1}
+
+/* HEADER */
+header{
+  height:var(--header-h);display:flex;align-items:center;
+  padding:0 1.25rem;gap:1rem;
+  background:rgba(8,8,16,.85);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:200;flex-shrink:0;
+}
+.logo{
+  font-size:1.4rem;font-weight:900;letter-spacing:-.03em;
+  background:linear-gradient(135deg,var(--accent),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  white-space:nowrap;cursor:pointer;flex-shrink:0;
+}
+.search-wrap{
+  flex:1;max-width:600px;margin:0 auto;
+  display:flex;align-items:center;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:999px;overflow:hidden;
+  transition:border-color .2s,box-shadow .2s;
+}
+.search-wrap:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,99,255,.15)}
+.search-wrap input{
+  flex:1;padding:.55rem 1rem;background:none;border:none;outline:none;
+  color:var(--text);font-family:var(--font);font-size:.9rem;
+}
+.search-wrap input::placeholder{color:var(--text3)}
+.search-btn{
+  padding:.5rem 1.1rem;background:var(--accent);border:none;cursor:pointer;
+  color:#fff;font-size:.85rem;font-weight:600;transition:background .2s;
+  display:flex;align-items:center;gap:.4rem;
+}
+.search-btn:hover{background:var(--accent-h)}
+.header-actions{display:flex;align-items:center;gap:.5rem;flex-shrink:0}
+.icon-btn{
+  width:36px;height:36px;border-radius:8px;border:1px solid var(--border);
+  background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--text2);font-size:1rem;transition:all .2s;
+}
+.icon-btn:hover{background:var(--surface3);color:var(--text)}
+
+/* BODY LAYOUT */
+.body-wrap{display:flex;flex:1;overflow:hidden}
+
+/* SIDEBAR */
+nav#sidebar{
+  width:var(--sidebar-w);flex-shrink:0;
+  background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;
+  transition:transform .3s,width .3s;
+}
+.nav-section{padding:1rem .75rem .5rem;font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)}
+.nav-item{
+  display:flex;align-items:center;gap:.75rem;
+  padding:.6rem .9rem;border-radius:10px;margin:2px .5rem;
+  cursor:pointer;color:var(--text2);font-size:.88rem;font-weight:500;
+  transition:all .2s;position:relative;
+}
+.nav-item:hover{background:var(--surface);color:var(--text)}
+.nav-item.active{background:rgba(108,99,255,.15);color:var(--accent)}
+.nav-item.active::before{content:'';position:absolute;left:-4px;top:50%;transform:translateY(-50%);height:60%;width:3px;background:var(--accent);border-radius:2px}
+.nav-icon{font-size:1.1rem;width:22px;text-align:center;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;padding:.1rem .45rem;border-radius:999px}
+
+/* MAIN CONTENT */
+#main-content{flex:1;overflow-y:auto;overflow-x:hidden}
+
+/* HOME PAGE */
+#page-home{padding:0}
+.hero-section{
+  padding:2.5rem 2rem 2rem;
+  background:linear-gradient(180deg,rgba(108,99,255,.08) 0%,transparent 100%);
+  border-bottom:1px solid var(--border);
+}
+.hero-title{font-size:clamp(1.5rem,3vw,2.2rem);font-weight:800;letter-spacing:-.02em;margin-bottom:.4rem}
+.hero-sub{color:var(--text2);font-size:.95rem}
+.trending-searches{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
+.trend-tag{
+  padding:.35rem .85rem;border-radius:999px;
+  background:var(--surface2);border:1px solid var(--border);
+  font-size:.8rem;color:var(--text2);cursor:pointer;transition:all .2s;
+}
+.trend-tag:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+.section-row{padding:1.5rem 1.5rem 0}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.section-heading{font-size:1.05rem;font-weight:700;letter-spacing:-.01em}
+.section-more{font-size:.8rem;color:var(--accent);cursor:pointer;font-weight:600}
+.section-more:hover{text-decoration:underline}
+
+.video-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;padding-bottom:1.5rem}
+.video-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;cursor:pointer;transition:all .25s;
+}
+.video-card:hover{transform:translateY(-3px);border-color:var(--border2);box-shadow:0 8px 30px rgba(0,0,0,.3)}
+.card-thumb{position:relative;aspect-ratio:16/9;background:var(--surface2);overflow:hidden}
+.card-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.video-card:hover .card-thumb img{transform:scale(1.03)}
+.card-duration{
+  position:absolute;bottom:.4rem;right:.4rem;
+  background:rgba(0,0,0,.85);color:#fff;
+  font-size:.7rem;font-weight:600;font-family:var(--mono);
+  padding:.2rem .5rem;border-radius:5px;
+}
+.card-thumb-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;background:linear-gradient(135deg,var(--surface2),var(--surface3))}
+.card-body{padding:.85rem}
+.card-title{font-size:.88rem;font-weight:600;line-height:1.4;margin-bottom:.4rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-meta{font-size:.75rem;color:var(--text3);display:flex;gap:.5rem;flex-wrap:wrap}
+.card-author{color:var(--text2);font-weight:500}
+
+/* SEARCH PAGE */
+#page-search{padding:1.5rem}
+.search-header{margin-bottom:1.25rem}
+.search-stats{font-size:.85rem;color:var(--text2)}
+.search-stats strong{color:var(--text)}
+.search-filters{display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap}
+.filter-btn{
+  padding:.35rem .9rem;border-radius:999px;border:1px solid var(--border);
+  background:var(--surface2);font-size:.8rem;color:var(--text2);cursor:pointer;
+  transition:all .2s;font-family:var(--font);
+}
+.filter-btn:hover,.filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* VIDEO PAGE */
+#page-video{padding:1.25rem;display:grid;grid-template-columns:1fr 340px;gap:1.25rem}
+@media(max-width:900px){#page-video{grid-template-columns:1fr}}
+.video-main{}
+.player-wrap{
+  background:#000;border-radius:var(--radius);overflow:hidden;
+  position:relative;aspect-ratio:16/9;
+}
+#video-el{width:100%;height:100%;display:block}
+.player-overlay{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.4);cursor:pointer;transition:opacity .2s;
+}
+.player-overlay.hidden{opacity:0;pointer-events:none}
+.play-big{
+  width:64px;height:64px;border-radius:50%;
+  background:rgba(108,99,255,.9);display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;transition:transform .2s;
+}
+.player-overlay:hover .play-big{transform:scale(1.1)}
+.player-controls{
+  position:absolute;bottom:0;left:0;right:0;
+  background:linear-gradient(transparent,rgba(0,0,0,.85));
+  padding:2rem .75rem .75rem;
+  display:flex;flex-direction:column;gap:.5rem;
+  opacity:0;transition:opacity .3s;
+}
+.player-wrap:hover .player-controls{opacity:1}
+.progress-bar{width:100%;height:4px;background:rgba(255,255,255,.2);border-radius:2px;cursor:pointer;position:relative}
+.progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .1s;position:relative}
+.progress-fill::after{content:'';position:absolute;right:-6px;top:-4px;width:12px;height:12px;background:#fff;border-radius:50%;box-shadow:0 0 4px rgba(0,0,0,.5)}
+.ctrl-row{display:flex;align-items:center;gap:.5rem}
+.ctrl-btn{background:none;border:none;cursor:pointer;color:#fff;font-size:1rem;padding:.25rem;opacity:.85;transition:opacity .2s}
+.ctrl-btn:hover{opacity:1}
+.vol-slider{width:70px;height:3px;cursor:pointer;accent-color:var(--accent)}
+.time-display{font-family:var(--mono);font-size:.72rem;color:rgba(255,255,255,.8);margin-left:.25rem}
+.ctrl-right{margin-left:auto;display:flex;gap:.5rem;align-items:center}
+
+.video-info{margin-top:1rem}
+.video-title-main{font-size:1.15rem;font-weight:700;letter-spacing:-.01em;line-height:1.4;margin-bottom:.75rem}
+.video-meta-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;padding-bottom:.75rem;border-bottom:1px solid var(--border)}
+.video-author{display:flex;align-items:center;gap:.6rem}
+.author-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;color:#fff;flex-shrink:0}
+.author-name{font-weight:600;font-size:.9rem}
+.author-subs{font-size:.75rem;color:var(--text3)}
+.action-btns{display:flex;gap:.5rem;flex-wrap:wrap}
+.action-btn{
+  display:flex;align-items:center;gap:.4rem;
+  padding:.45rem 1rem;border-radius:999px;border:1px solid var(--border);
+  background:var(--surface2);cursor:pointer;font-size:.82rem;font-weight:600;color:var(--text2);
+  transition:all .2s;font-family:var(--font);
+}
+.action-btn:hover{background:var(--surface3);color:var(--text)}
+.action-btn.active{background:rgba(108,99,255,.15);color:var(--accent);border-color:var(--accent)}
+
+.video-desc{
+  margin-top:.85rem;font-size:.85rem;color:var(--text2);line-height:1.7;
+  background:var(--surface);border-radius:var(--radius);padding:1rem;
+  cursor:pointer;
+}
+.video-desc.collapsed{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+
+.tabs-wrap{margin-top:1rem;border-bottom:1px solid var(--border)}
+.tabs{display:flex;gap:0}
+.tab-btn{
+  padding:.7rem 1.2rem;font-size:.85rem;font-weight:600;cursor:pointer;
+  background:none;border:none;color:var(--text3);border-bottom:2px solid transparent;
+  font-family:var(--font);transition:all .2s;
+}
+.tab-btn:hover{color:var(--text2)}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-panel{display:none;padding:1rem 0}
+.tab-panel.active{display:block}
+
+/* DOWNLOAD PANEL */
+.download-section{margin-top:1rem}
+.dl-title{font-size:.9rem;font-weight:700;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
+.dl-options{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.dl-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;
+}
+.dl-card-header{display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem}
+.dl-format-badge{padding:.2rem .6rem;border-radius:5px;font-size:.7rem;font-weight:700;font-family:var(--mono)}
+.dl-mp4{background:rgba(108,99,255,.15);color:var(--accent)}
+.dl-mp3{background:rgba(0,229,160,.15);color:var(--green)}
+.dl-format-name{font-weight:600;font-size:.85rem}
+select.quality-select{
+  width:100%;padding:.4rem .7rem;border-radius:8px;
+  background:var(--surface2);border:1px solid var(--border);
+  color:var(--text);font-family:var(--font);font-size:.82rem;
+  margin-bottom:.6rem;outline:none;cursor:pointer;
+}
+.dl-btn{
+  width:100%;padding:.5rem;border-radius:8px;border:none;cursor:pointer;
+  font-family:var(--font);font-size:.82rem;font-weight:700;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:.4rem;
+}
+.dl-btn-mp4{background:var(--accent);color:#fff}
+.dl-btn-mp4:hover{background:var(--accent-h)}
+.dl-btn-mp3{background:var(--green);color:#000}
+.dl-btn-mp3:hover{filter:brightness(1.1)}
+.dl-status{font-size:.75rem;margin-top:.5rem;text-align:center;min-height:1rem;color:var(--text3)}
+.dl-status.loading{color:var(--yellow)}
+.dl-status.success{color:var(--green)}
+.dl-status.error{color:var(--red)}
+
+/* RELATED SIDEBAR */
+.related-sidebar{display:flex;flex-direction:column;gap:.75rem}
+.related-title{font-size:.9rem;font-weight:700;margin-bottom:.25rem}
+.related-card{
+  display:flex;gap:.75rem;cursor:pointer;padding:.5rem;border-radius:10px;
+  transition:background .2s;
+}
+.related-card:hover{background:var(--surface2)}
+.related-thumb{width:120px;height:68px;border-radius:8px;overflow:hidden;flex-shrink:0;background:var(--surface3)}
+.related-thumb img{width:100%;height:100%;object-fit:cover}
+.related-info{flex:1;min-width:0}
+.related-t{font-size:.8rem;font-weight:600;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4;margin-bottom:.3rem}
+.related-m{font-size:.72rem;color:var(--text3)}
+
+/* LYRICS */
+.lyrics-content{
+  font-size:.88rem;line-height:2;white-space:pre-wrap;
+  background:var(--surface);border-radius:var(--radius);padding:1.25rem;
+  max-height:400px;overflow-y:auto;color:var(--text2);
+}
+
+/* LIBRARY PAGE */
+#page-library{padding:1.5rem}
+.lib-tabs{display:flex;gap:.5rem;margin-bottom:1.25rem}
+.lib-tab{
+  padding:.45rem 1rem;border-radius:8px;border:1px solid var(--border);
+  background:var(--surface2);font-size:.82rem;font-weight:600;color:var(--text2);
+  cursor:pointer;font-family:var(--font);transition:all .2s;
+}
+.lib-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.lib-panel{display:none}
+.lib-panel.active{display:block}
+.empty-state{
+  text-align:center;padding:4rem 2rem;color:var(--text3);
+}
+.empty-icon{font-size:3rem;margin-bottom:1rem;display:block}
+.empty-text{font-size:.95rem}
+
+/* PLAYLIST CREATOR */
+.playlist-create{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:1.25rem;margin-bottom:1.25rem;
+}
+.playlist-form{display:flex;gap:.75rem}
+.playlist-input{
+  flex:1;padding:.5rem .85rem;border-radius:8px;background:var(--surface2);
+  border:1px solid var(--border);color:var(--text);font-family:var(--font);
+  font-size:.88rem;outline:none;
+}
+.playlist-input:focus{border-color:var(--accent)}
+.create-btn{
+  padding:.5rem 1rem;border-radius:8px;background:var(--accent);
+  border:none;color:#fff;font-family:var(--font);font-size:.85rem;font-weight:700;
+  cursor:pointer;white-space:nowrap;transition:background .2s;
+}
+.create-btn:hover{background:var(--accent-h)}
+
+/* TIKTOK PAGE */
+#page-tiktok{padding:1.5rem;max-width:600px;margin:0 auto}
+.tiktok-form{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:2rem}
+.tiktok-title{font-size:1.2rem;font-weight:800;margin-bottom:.5rem}
+.tiktok-sub{font-size:.85rem;color:var(--text2);margin-bottom:1.25rem}
+.url-input-wrap{display:flex;gap:.75rem;flex-direction:column}
+.big-input{
+  width:100%;padding:.7rem 1rem;border-radius:10px;background:var(--surface2);
+  border:1px solid var(--border);color:var(--text);font-family:var(--font);
+  font-size:.9rem;outline:none;
+}
+.big-input:focus{border-color:var(--accent)}
+.big-btn{
+  padding:.7rem 1.5rem;border-radius:10px;background:linear-gradient(135deg,#010101,#69C9D0);
+  border:none;color:#fff;font-family:var(--font);font-size:.9rem;font-weight:700;
+  cursor:pointer;transition:opacity .2s;
+}
+.big-btn:hover{opacity:.9}
+
+/* LOADING SKELETON */
+.skeleton{
+  background:linear-gradient(90deg,var(--surface2) 25%,var(--surface3) 50%,var(--surface2) 75%);
+  background-size:200% 100%;
+  animation:shimmer 1.5s infinite;
+  border-radius:6px;
+}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skel-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.skel-thumb{aspect-ratio:16/9}
+.skel-body{padding:.85rem;display:flex;flex-direction:column;gap:.5rem}
+.skel-line{height:14px}
+.skel-short{width:60%}
+
+/* TOAST */
+#toast-container{position:fixed;bottom:1.5rem;right:1.5rem;z-index:999;display:flex;flex-direction:column;gap:.5rem}
+.toast{
+  background:var(--surface2);border:1px solid var(--border2);border-radius:10px;
+  padding:.75rem 1.1rem;font-size:.85rem;
+  animation:toastIn .3s ease;max-width:280px;
+  display:flex;align-items:center;gap:.6rem;
+  box-shadow:0 8px 30px rgba(0,0,0,.3);
+}
+.toast.success{border-color:var(--green);color:var(--green)}
+.toast.error{border-color:var(--red);color:var(--red)}
+.toast.info{border-color:var(--accent);color:var(--accent)}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+
+/* SPINNER */
+.spinner{
+  width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);
+  border-radius:50%;animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* MOBILE NAV */
+.mobile-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--bg2);border-top:1px solid var(--border);
+  padding:.5rem;z-index:200;
+  justify-content:space-around;
+}
+.mob-btn{
+  display:flex;flex-direction:column;align-items:center;gap:.2rem;
+  background:none;border:none;cursor:pointer;color:var(--text3);font-size:.6rem;font-family:var(--font);
+  padding:.35rem .75rem;border-radius:8px;transition:all .2s;
+}
+.mob-btn .mob-icon{font-size:1.2rem}
+.mob-btn.active{color:var(--accent)}
+
+@media(max-width:768px){
+  nav#sidebar{display:none}
+  .mobile-nav{display:flex}
+  #main-content{padding-bottom:70px}
+  .dl-options{grid-template-columns:1fr}
+  header{padding:0 .75rem}
+  .header-actions .icon-btn:not(.always){display:none}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- HEADER -->
+  <header>
+    <div class="logo" onclick="navigate('home')">Sky<span style="color:var(--cyan);-webkit-text-fill-color:var(--cyan)">Stream</span></div>
+    <div class="search-wrap">
+      <input type="text" id="main-search" placeholder="Search videos, music, channels..." autocomplete="off">
+      <button class="search-btn" onclick="doSearch()">
+        <span>🔍</span>
+      </button>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme">☀️</button>
+      <button class="icon-btn always" onclick="navigate('library')" title="Library">📚</button>
+    </div>
+  </header>
+
+  <div class="body-wrap">
+    <!-- SIDEBAR -->
+    <nav id="sidebar">
+      <div style="height:.75rem"></div>
+      <div class="nav-item active" onclick="navigate('home')" id="nav-home">
+        <span class="nav-icon">🏠</span> Home
+      </div>
+      <div class="nav-item" onclick="doSearch('trending music 2024')" id="nav-trending">
+        <span class="nav-icon">🔥</span> Trending
+      </div>
+      <div class="nav-item" onclick="doSearch('music videos')" id="nav-music">
+        <span class="nav-icon">🎵</span> Music
+      </div>
+      <div class="nav-item" onclick="doSearch('gaming videos')" id="nav-gaming">
+        <span class="nav-icon">🎮</span> Gaming
+      </div>
+      <div class="nav-section">Library</div>
+      <div class="nav-item" onclick="navigate('library','history')" id="nav-history">
+        <span class="nav-icon">🕐</span> History
+      </div>
+      <div class="nav-item" onclick="navigate('library','favorites')" id="nav-favorites">
+        <span class="nav-icon">❤️</span> Favorites
+      </div>
+      <div class="nav-item" onclick="navigate('library','playlists')" id="nav-playlists">
+        <span class="nav-icon">📂</span> Playlists
+      </div>
+      <div class="nav-section">Tools</div>
+      <div class="nav-item" onclick="navigate('tiktok')" id="nav-tiktok">
+        <span class="nav-icon">📱</span> TikTok DL
+      </div>
+      <div style="flex:1"></div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div id="main-content">
+      <!-- HOME PAGE -->
+      <div id="page-home" class="page">
+        <div class="hero-section">
+          <div class="hero-title">What are you looking for? 🎬</div>
+          <div class="hero-sub">Search millions of videos, download music, explore content</div>
+          <div class="trending-searches" id="trending-tags"></div>
+        </div>
+        <div class="section-row">
+          <div class="section-header">
+            <div class="section-heading">🔥 Trending Now</div>
+          </div>
+          <div class="video-grid" id="home-trending"></div>
+        </div>
+        <div class="section-row">
+          <div class="section-header">
+            <div class="section-heading">🎵 Popular Music</div>
+          </div>
+          <div class="video-grid" id="home-music"></div>
+        </div>
+      </div>
+
+      <!-- SEARCH PAGE -->
+      <div id="page-search" class="page" style="display:none">
+        <div class="search-header">
+          <div class="search-stats" id="search-stats">Search for something to get started</div>
+          <div class="search-filters">
+            <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+            <button class="filter-btn" onclick="setFilter('short',this)">Short (&lt;4min)</button>
+            <button class="filter-btn" onclick="setFilter('long',this)">Long (&gt;20min)</button>
+          </div>
+        </div>
+        <div class="video-grid" id="search-results"></div>
+      </div>
+
+      <!-- VIDEO PAGE -->
+      <div id="page-video" class="page" style="display:none">
+        <div class="video-main">
+          <div class="player-wrap" id="player-wrap">
+            <video id="video-el" controls preload="metadata"></video>
+            <div class="player-overlay hidden" id="player-overlay">
+              <div class="play-big">▶</div>
+            </div>
+          </div>
+          <div class="video-info">
+            <div class="video-title-main" id="vid-title">Loading...</div>
+            <div class="video-meta-row">
+              <div class="video-author">
+                <div class="author-avatar" id="author-avatar">?</div>
+                <div>
+                  <div class="author-name" id="vid-author">Unknown</div>
+                  <div class="author-subs" id="vid-views">0 views</div>
+                </div>
+              </div>
+              <div class="action-btns">
+                <button class="action-btn" id="btn-like" onclick="toggleLike()">👍 Like</button>
+                <button class="action-btn" id="btn-fav" onclick="toggleFavorite()">❤️ Save</button>
+                <button class="action-btn" onclick="addToPlaylistPrompt()">📂 Playlist</button>
+              </div>
+            </div>
+            <div class="video-desc collapsed" id="vid-desc" onclick="this.classList.toggle('collapsed')">Loading description...</div>
+
+            <!-- TABS -->
+            <div class="tabs-wrap">
+              <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('download',this)">⬇️ Download</button>
+                <button class="tab-btn" onclick="switchTab('lyrics',this)">🎵 Lyrics</button>
+                <button class="tab-btn" onclick="switchTab('wiki',this)">📖 About</button>
+                <button class="tab-btn" onclick="switchTab('comments',this)">💬 Comments</button>
+              </div>
+            </div>
+
+            <div class="tab-panel active" id="tab-download">
+              <div class="dl-options">
+                <div class="dl-card">
+                  <div class="dl-card-header">
+                    <div class="dl-format-badge dl-mp4">MP4</div>
+                    <div class="dl-format-name">Video Download</div>
+                  </div>
+                  <select class="quality-select" id="mp4-quality">
+                    <option value="1080p">1080p HD</option>
+                    <option value="720p" selected>720p</option>
+                    <option value="480p">480p</option>
+                    <option value="360p">360p</option>
+                    <option value="240p">240p</option>
+                    <option value="144p">144p</option>
+                  </select>
+                  <button class="dl-btn dl-btn-mp4" onclick="downloadVideo('mp4')">⬇️ Download MP4</button>
+                  <div class="dl-status" id="dl-mp4-status"></div>
+                </div>
+                <div class="dl-card">
+                  <div class="dl-card-header">
+                    <div class="dl-format-badge dl-mp3">MP3</div>
+                    <div class="dl-format-name">Audio Download</div>
+                  </div>
+                  <select class="quality-select" id="mp3-quality">
+                    <option value="320kbps">320kbps HQ</option>
+                    <option value="192kbps" selected>192kbps</option>
+                    <option value="128kbps">128kbps</option>
+                    <option value="64kbps">64kbps</option>
+                  </select>
+                  <button class="dl-btn dl-btn-mp3" onclick="downloadVideo('mp3')">🎵 Download MP3</button>
+                  <div class="dl-status" id="dl-mp3-status"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-panel" id="tab-lyrics">
+              <div id="lyrics-content"><div style="text-align:center;padding:2rem;color:var(--text3)">Click to load lyrics for this track...</div>
+              <button class="action-btn" style="margin:0 auto;display:flex" onclick="fetchLyrics()">🎵 Fetch Lyrics</button></div>
+            </div>
+
+            <div class="tab-panel" id="tab-wiki">
+              <div id="wiki-content"><div style="text-align:center;padding:2rem;color:var(--text3)">Click to load Wikipedia info...</div>
+              <button class="action-btn" style="margin:0 auto;display:flex" onclick="fetchWiki()">📖 Load Info</button></div>
+            </div>
+
+            <div class="tab-panel" id="tab-comments">
+              <div style="padding:2rem;text-align:center;color:var(--text3)">
+                <div style="font-size:2rem;margin-bottom:.5rem">💬</div>
+                <div>Comments coming in Phase 2</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RELATED -->
+        <div class="related-sidebar">
+          <div class="related-title">Up Next</div>
+          <div id="related-videos"></div>
+        </div>
+      </div>
+
+      <!-- LIBRARY PAGE -->
+      <div id="page-library" class="page" style="display:none">
+        <div style="margin-bottom:1.25rem">
+          <div style="font-size:1.3rem;font-weight:800;margin-bottom:.25rem">Your Library</div>
+          <div style="font-size:.85rem;color:var(--text2)">Your saved content, history, and playlists</div>
+        </div>
+        <div class="lib-tabs">
+          <button class="lib-tab active" onclick="switchLibTab('history',this)">🕐 History</button>
+          <button class="lib-tab" onclick="switchLibTab('favorites',this)">❤️ Favorites</button>
+          <button class="lib-tab" onclick="switchLibTab('playlists',this)">📂 Playlists</button>
+        </div>
+        <div class="lib-panel active" id="lib-history">
+          <div class="video-grid" id="history-grid"></div>
+        </div>
+        <div class="lib-panel" id="lib-favorites">
+          <div class="video-grid" id="favorites-grid"></div>
+        </div>
+        <div class="lib-panel" id="lib-playlists">
+          <div class="playlist-create">
+            <div style="font-size:.9rem;font-weight:700;margin-bottom:.75rem">Create New Playlist</div>
+            <div class="playlist-form">
+              <input type="text" class="playlist-input" id="playlist-name" placeholder="Playlist name...">
+              <button class="create-btn" onclick="createPlaylist()">Create</button>
+            </div>
+          </div>
+          <div id="playlists-grid"></div>
+        </div>
+      </div>
+
+      <!-- TIKTOK PAGE -->
+      <div id="page-tiktok" class="page" style="display:none">
+        <div class="tiktok-form">
+          <div style="font-size:2rem;margin-bottom:.5rem">📱</div>
+          <div class="tiktok-title">TikTok Downloader</div>
+          <div class="tiktok-sub">Paste a TikTok video URL to download it without watermark</div>
+          <div class="url-input-wrap">
+            <input type="url" class="big-input" id="tiktok-url" placeholder="https://www.tiktok.com/@user/video/...">
+            <button class="big-btn" onclick="downloadTiktok()">⬇️ Download TikTok</button>
+          </div>
+          <div id="tiktok-status" style="margin-top:1rem;font-size:.85rem;text-align:center"></div>
+        </div>
+        <div style="margin-top:2rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem">
+          <div style="font-size:.85rem;font-weight:700;margin-bottom:.75rem">How to get a TikTok URL</div>
+          <div style="font-size:.82rem;color:var(--text2);line-height:1.8">
+            1. Open TikTok and find the video you want<br>
+            2. Tap "Share" → "Copy Link"<br>
+            3. Paste the link above and click Download
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOBILE NAV -->
+  <div class="mobile-nav">
+    <button class="mob-btn active" onclick="navigate('home')" id="mob-home"><span class="mob-icon">🏠</span>Home</button>
+    <button class="mob-btn" onclick="navigate('search')" id="mob-search"><span class="mob-icon">🔍</span>Search</button>
+    <button class="mob-btn" onclick="navigate('library')" id="mob-library"><span class="mob-icon">📚</span>Library</button>
+    <button class="mob-btn" onclick="navigate('tiktok')" id="mob-tiktok"><span class="mob-icon">📱</span>TikTok</button>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+<script>
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+const BASE = 'https://bera-api.up.railway.app/api';
+let state = {
+  currentPage: 'home',
+  currentVideo: null,
+  searchResults: [],
+  searchQuery: '',
+  filterMode: 'all',
+  history: JSON.parse(localStorage.getItem('ss_history') || '[]'),
+  favorites: JSON.parse(localStorage.getItem('ss_favorites') || '[]'),
+  playlists: JSON.parse(localStorage.getItem('ss_playlists') || '[]'),
+  theme: localStorage.getItem('ss_theme') || 'dark',
+};
+
+// Apply saved theme
+document.documentElement.setAttribute('data-theme', state.theme);
+
+// ─────────────────────────────────────────────
+// API
+// ─────────────────────────────────────────────
+async function apiCall(url) {
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
+async function searchYT(query, limit = 20) {
+  return apiCall(`${BASE}/search/yts?query=${encodeURIComponent(query)}&limit=${limit}`);
+}
+
+async function fetchLyricsAPI(query) {
+  return apiCall(`${BASE}/search/lyrics?query=${encodeURIComponent(query)}`);
+}
+
+async function fetchWikiAPI(query) {
+  return apiCall(`${BASE}/search/wiki?query=${encodeURIComponent(query)}`);
+}
+
+async function downloadMP4API(url, quality) {
+  return apiCall(`${BASE}/download/ytmp4?url=${encodeURIComponent(url)}&quality=${quality}`);
+}
+
+async function downloadMP3API(url, quality) {
+  return apiCall(`${BASE}/download/ytmp3?url=${encodeURIComponent(url)}&quality=${quality}`);
+}
+
+async function downloadTiktokAPI(url) {
+  return apiCall(`${BASE}/download/tiktok?url=${encodeURIComponent(url)}`);
+}
+
+// ─────────────────────────────────────────────
+// NAVIGATION
+// ─────────────────────────────────────────────
+function navigate(page, subTab) {
+  document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+  document.querySelectorAll('.mob-btn').forEach(b => b.classList.remove('active'));
+
+  state.currentPage = page;
+  const pg = document.getElementById('page-' + page);
+  if (pg) pg.style.display = (page === 'video') ? 'grid' : 'block';
+
+  const ni = document.getElementById('nav-' + page);
+  if (ni) ni.classList.add('active');
+  const mi = document.getElementById('mob-' + page);
+  if (mi) mi.classList.add('active');
+
+  if (page === 'library') {
+    renderLibrary();
+    if (subTab) switchLibTab(subTab, document.querySelector(`.lib-tab`));
+  }
+  if (page === 'home') renderHome();
+
+  window.scrollTo(0, 0);
+}
+
+// ─────────────────────────────────────────────
+// THEME
+// ─────────────────────────────────────────────
+function toggleTheme() {
+  state.theme = state.theme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', state.theme);
+  localStorage.setItem('ss_theme', state.theme);
+  document.querySelector('.icon-btn').textContent = state.theme === 'dark' ? '☀️' : '🌙';
+}
+
+// ─────────────────────────────────────────────
+// SEARCH
+// ─────────────────────────────────────────────
+async function doSearch(query) {
+  query = query || document.getElementById('main-search').value.trim();
+  if (!query) return;
+  document.getElementById('main-search').value = query;
+  state.searchQuery = query;
+  navigate('search');
+  document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+  document.getElementById('page-search').style.display = 'block';
+
+  const grid = document.getElementById('search-results');
+  const stats = document.getElementById('search-stats');
+  grid.innerHTML = renderSkeletons(12);
+  stats.innerHTML = `Searching for "<strong>${escHtml(query)}</strong>"...`;
+
+  try {
+    const data = await searchYT(query, 24);
+    let results = data.results || data.data || data || [];
+    if (!Array.isArray(results)) results = [];
+    state.searchResults = results;
+    renderSearchResults(results);
+  } catch(e) {
+    grid.innerHTML = `<div style="padding:2rem;color:var(--red)">⚠️ Search failed: ${e.message}. The Bera API may be unavailable or CORS is blocked in this browser context.</div>`;
+    stats.innerHTML = 'Error loading results';
+    showToast('Search failed — API may be unavailable', 'error');
+  }
+}
+
+function renderSearchResults(results) {
+  const grid = document.getElementById('search-results');
+  const stats = document.getElementById('search-stats');
+
+  let filtered = results;
+  if (state.filterMode === 'short') filtered = results.filter(v => parseDuration(v.duration?.timestamp) < 240);
+  if (state.filterMode === 'long') filtered = results.filter(v => parseDuration(v.duration?.timestamp) > 1200);
+
+  stats.innerHTML = `Found <strong>${filtered.length}</strong> results for "<strong>${escHtml(state.searchQuery)}</strong>"`;
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="empty-state"><span class="empty-icon">🔍</span><div class="empty-text">No results found</div></div>';
+    return;
+  }
+  grid.innerHTML = filtered.map(v => videoCardHTML(v)).join('');
+}
+
+function setFilter(mode, btn) {
+  state.filterMode = mode;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderSearchResults(state.searchResults);
+}
+
+function parseDuration(ts) {
+  if (!ts) return 0;
+  const parts = ts.split(':').reverse();
+  return (parseInt(parts[0])||0) + (parseInt(parts[1])||0)*60 + (parseInt(parts[2])||0)*3600;
+}
+
+// ─────────────────────────────────────────────
+// VIDEO CARD HTML
+// ─────────────────────────────────────────────
+function videoCardHTML(v) {
+  const vid = v.videoId || v.id || '';
+  const title = escHtml(v.title || 'Untitled');
+  const author = escHtml(v.author?.name || v.channel || 'Unknown');
+  const views = formatViews(v.views || v.viewCount || 0);
+  const duration = v.duration?.timestamp || v.duration || '';
+  const thumb = v.thumbnail || v.thumbnails?.[0]?.url || '';
+  const ago = v.ago || v.publishedAt || '';
+
+  return `<div class="video-card" onclick="openVideo(${JSON.stringify(v).replace(/"/g,'&quot;')})">
+    <div class="card-thumb">
+      ${thumb ? `<img src="${thumb}" alt="${title}" loading="lazy" onerror="this.style.display='none';this.nextSibling.style.display='flex'">
+      <div class="card-thumb-placeholder" style="display:none">🎬</div>` : `<div class="card-thumb-placeholder">🎬</div>`}
+      ${duration ? `<div class="card-duration">${duration}</div>` : ''}
+    </div>
+    <div class="card-body">
+      <div class="card-title">${title}</div>
+      <div class="card-meta">
+        <span class="card-author">${author}</span>
+        ${views ? `<span>${views}</span>` : ''}
+        ${ago ? `<span>${ago}</span>` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─────────────────────────────────────────────
+// OPEN VIDEO
+// ─────────────────────────────────────────────
+function openVideo(v) {
+  state.currentVideo = v;
+
+  // Add to history
+  const existing = state.history.findIndex(h => h.videoId === v.videoId);
+  if (existing > -1) state.history.splice(existing, 1);
+  state.history.unshift(v);
+  if (state.history.length > 50) state.history.pop();
+  localStorage.setItem('ss_history', JSON.stringify(state.history));
+
+  navigate('video');
+
+  // Populate video
+  const vidUrl = `https://www.youtube.com/watch?v=${v.videoId}`;
+  const thumb = v.thumbnail || '';
+
+  // Use YouTube embed
+  const pw = document.getElementById('player-wrap');
+  pw.innerHTML = `<iframe 
+    src="https://www.youtube.com/embed/${v.videoId}?autoplay=1&rel=0" 
+    style="width:100%;height:100%;border:none" 
+    allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share"
+    allowfullscreen>
+  </iframe>`;
+
+  document.getElementById('vid-title').textContent = v.title || 'Untitled';
+  document.getElementById('vid-author').textContent = v.author?.name || v.channel || 'Unknown';
+  document.getElementById('vid-views').textContent = `${formatViews(v.views || 0)} views • ${v.ago || ''}`;
+  document.getElementById('vid-desc').textContent = v.description || v.descriptionSnippet || 'No description available. Click "About" tab to load Wikipedia info.';
+  document.getElementById('author-avatar').textContent = (v.author?.name || 'U')[0].toUpperCase();
+
+  // Favorite button state
+  const isFav = state.favorites.some(f => f.videoId === v.videoId);
+  document.getElementById('btn-fav').classList.toggle('active', isFav);
+
+  // Load related
+  loadRelated(v.author?.name || v.title || 'videos');
+
+  // Reset tabs
+  document.getElementById('lyrics-content').innerHTML = `
+    <div style="text-align:center;padding:2rem;color:var(--text3)">Load lyrics for this track</div>
+    <button class="action-btn" style="margin:0 auto;display:flex" onclick="fetchLyrics()">🎵 Fetch Lyrics</button>`;
+  document.getElementById('wiki-content').innerHTML = `
+    <div style="text-align:center;padding:2rem;color:var(--text3)">Load Wikipedia info</div>
+    <button class="action-btn" style="margin:0 auto;display:flex" onclick="fetchWiki()">📖 Load Info</button>`;
+
+  switchTab('download', document.querySelector('.tab-btn'));
+}
+
+async function loadRelated(query) {
+  const container = document.getElementById('related-videos');
+  container.innerHTML = '<div class="spinner" style="margin:1rem auto"></div>';
+  try {
+    const data = await searchYT(query, 10);
+    const results = data.results || data.data || data || [];
+    if (!Array.isArray(results) || !results.length) { container.innerHTML = ''; return; }
+    container.innerHTML = results.slice(0,8).map(v => `
+      <div class="related-card" onclick="openVideo(${JSON.stringify(v).replace(/"/g,'&quot;')})">
+        <div class="related-thumb">
+          <img src="${v.thumbnail || ''}" alt="${escHtml(v.title||'')}" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="related-info">
+          <div class="related-t">${escHtml(v.title || 'Untitled')}</div>
+          <div class="related-m">${escHtml(v.author?.name || '')} • ${formatViews(v.views || 0)}</div>
+        </div>
+      </div>`).join('');
+  } catch(e) { container.innerHTML = '<div style="color:var(--text3);font-size:.8rem;padding:.5rem">Could not load related videos</div>'; }
+}
+
+// ─────────────────────────────────────────────
+// TABS
+// ─────────────────────────────────────────────
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  const panel = document.getElementById('tab-' + id);
+  if (panel) panel.classList.add('active');
+  if (btn) btn.classList.add('active');
+  else {
+    const b = document.querySelector(`.tab-btn[onclick*="${id}"]`);
+    if (b) b.classList.add('active');
+  }
+}
+
+// ─────────────────────────────────────────────
+// LYRICS
+// ─────────────────────────────────────────────
+async function fetchLyrics() {
+  if (!state.currentVideo) return;
+  const query = state.currentVideo.title || state.currentVideo.author?.name || '';
+  document.getElementById('lyrics-content').innerHTML = '<div class="spinner" style="margin:2rem auto"></div>';
+  try {
+    const data = await fetchLyricsAPI(query);
+    const lyrics = data.lyrics || data.data?.lyrics || data.syncedLyrics?.map(l => l.text).join('\n') || data;
+    if (typeof lyrics === 'string' && lyrics.length > 10) {
+      document.getElementById('lyrics-content').innerHTML = `<div class="lyrics-content">${escHtml(lyrics)}</div>`;
+    } else {
+      document.getElementById('lyrics-content').innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text3)">Lyrics not found for this track</div>';
+    }
+  } catch(e) {
+    document.getElementById('lyrics-content').innerHTML = `<div style="padding:2rem;text-align:center;color:var(--red)">Could not load lyrics: ${e.message}</div>`;
+  }
+}
+
+// ─────────────────────────────────────────────
+// WIKIPEDIA
+// ─────────────────────────────────────────────
+async function fetchWiki() {
+  if (!state.currentVideo) return;
+  const query = state.currentVideo.author?.name || state.currentVideo.title || '';
+  document.getElementById('wiki-content').innerHTML = '<div class="spinner" style="margin:2rem auto"></div>';
+  try {
+    const data = await fetchWikiAPI(query);
+    const summary = data.summary || data.extract || data.description || data.data?.extract || JSON.stringify(data).slice(0,500);
+    const title = data.title || data.data?.title || query;
+    document.getElementById('wiki-content').innerHTML = `
+      <div style="background:var(--surface);border-radius:var(--radius);padding:1.25rem">
+        <div style="font-size:1rem;font-weight:700;margin-bottom:.75rem">📖 ${escHtml(title)}</div>
+        <div style="font-size:.85rem;color:var(--text2);line-height:1.8">${escHtml(summary)}</div>
+      </div>`;
+  } catch(e) {
+    document.getElementById('wiki-content').innerHTML = `<div style="padding:2rem;text-align:center;color:var(--red)">Could not load Wikipedia: ${e.message}</div>`;
+  }
+}
+
+// ─────────────────────────────────────────────
+// DOWNLOADS
+// ─────────────────────────────────────────────
+async function downloadVideo(type) {
+  if (!state.currentVideo) return;
+  const vid = state.currentVideo;
+  const ytUrl = `https://www.youtube.com/watch?v=${vid.videoId}`;
+  const quality = document.getElementById(type === 'mp4' ? 'mp4-quality' : 'mp3-quality').value;
+  const statusEl = document.getElementById(`dl-${type}-status`);
+
+  statusEl.className = 'dl-status loading';
+  statusEl.textContent = `⏳ Fetching ${quality} ${type.toUpperCase()}...`;
+
+  try {
+    const data = type === 'mp4'
+      ? await downloadMP4API(ytUrl, quality)
+      : await downloadMP3API(ytUrl, quality);
+
+    const dlUrl = data.url || data.download?.url || data.link || data.data?.url || data.downloadUrl;
+    if (dlUrl) {
+      statusEl.className = 'dl-status success';
+      statusEl.innerHTML = `✅ <a href="${dlUrl}" target="_blank" style="color:var(--green);font-weight:600">Click to Download</a>`;
+      showToast(`${type.toUpperCase()} ready! Click the link.`, 'success');
+    } else {
+      statusEl.className = 'dl-status error';
+      statusEl.textContent = '⚠️ No download URL returned';
+      showToast('Download URL not found in response', 'error');
+    }
+  } catch(e) {
+    statusEl.className = 'dl-status error';
+    statusEl.textContent = `❌ Failed: ${e.message}`;
+    showToast(`Download failed: ${e.message}`, 'error');
+  }
+}
+
+async function downloadTiktok() {
+  const url = document.getElementById('tiktok-url').value.trim();
+  if (!url) { showToast('Please enter a TikTok URL', 'error'); return; }
+  const statusEl = document.getElementById('tiktok-status');
+  statusEl.innerHTML = '<div class="spinner" style="margin:0 auto"></div>';
+
+  try {
+    const data = await downloadTiktokAPI(url);
+    const dlUrl = data.url || data.download?.url || data.videoUrl || data.data?.url;
+    if (dlUrl) {
+      statusEl.innerHTML = `<div style="color:var(--green);font-weight:600">✅ <a href="${dlUrl}" target="_blank" style="color:var(--green)">Download TikTok Video</a></div>`;
+      showToast('TikTok video ready!', 'success');
+    } else {
+      statusEl.innerHTML = `<div style="color:var(--yellow)">⚠️ Response received but no URL found. API response: ${JSON.stringify(data).slice(0,100)}</div>`;
+    }
+  } catch(e) {
+    statusEl.innerHTML = `<div style="color:var(--red)">❌ Failed: ${e.message}</div>`;
+    showToast('TikTok download failed', 'error');
+  }
+}
+
+// ─────────────────────────────────────────────
+// FAVORITES & LIBRARY
+// ─────────────────────────────────────────────
+function toggleFavorite() {
+  if (!state.currentVideo) return;
+  const idx = state.favorites.findIndex(f => f.videoId === state.currentVideo.videoId);
+  if (idx > -1) {
+    state.favorites.splice(idx, 1);
+    document.getElementById('btn-fav').classList.remove('active');
+    showToast('Removed from favorites', 'info');
+  } else {
+    state.favorites.unshift(state.currentVideo);
+    document.getElementById('btn-fav').classList.add('active');
+    showToast('Added to favorites ❤️', 'success');
+  }
+  localStorage.setItem('ss_favorites', JSON.stringify(state.favorites));
+}
+
+function toggleLike() {
+  const btn = document.getElementById('btn-like');
+  btn.classList.toggle('active');
+  showToast(btn.classList.contains('active') ? '👍 Liked!' : 'Like removed', 'info');
+}
+
+function createPlaylist() {
+  const name = document.getElementById('playlist-name').value.trim();
+  if (!name) { showToast('Enter a playlist name', 'error'); return; }
+  state.playlists.push({ id: Date.now(), name, videos: [] });
+  localStorage.setItem('ss_playlists', JSON.stringify(state.playlists));
+  document.getElementById('playlist-name').value = '';
+  renderLibrary();
+  showToast(`Playlist "${name}" created!`, 'success');
+}
+
+function addToPlaylistPrompt() {
+  if (!state.currentVideo) return;
+  if (!state.playlists.length) {
+    showToast('Create a playlist in Library first', 'info'); return;
+  }
+  const names = state.playlists.map((p,i) => `${i+1}. ${p.name}`).join('\n');
+  const choice = prompt(`Add to playlist:\n${names}\n\nEnter number:`);
+  const idx = parseInt(choice) - 1;
+  if (isNaN(idx) || !state.playlists[idx]) return;
+  const pl = state.playlists[idx];
+  if (!pl.videos.some(v => v.videoId === state.currentVideo.videoId)) {
+    pl.videos.push(state.currentVideo);
+    localStorage.setItem('ss_playlists', JSON.stringify(state.playlists));
+    showToast(`Added to "${pl.name}"`, 'success');
+  } else {
+    showToast('Already in this playlist', 'info');
+  }
+}
+
+function switchLibTab(id, btn) {
+  document.querySelectorAll('.lib-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.lib-tab').forEach(b => b.classList.remove('active'));
+  const panel = document.getElementById('lib-' + id);
+  if (panel) panel.classList.add('active');
+  const btns = document.querySelectorAll('.lib-tab');
+  btns.forEach(b => { if (b.textContent.toLowerCase().includes(id.slice(0,4))) b.classList.add('active'); });
+}
+
+function renderLibrary() {
+  // History
+  const hg = document.getElementById('history-grid');
+  if (!state.history.length) {
+    hg.innerHTML = '<div class="empty-state"><span class="empty-icon">🕐</span><div class="empty-text">No watch history yet</div></div>';
+  } else {
+    hg.innerHTML = state.history.map(v => videoCardHTML(v)).join('');
+  }
+
+  // Favorites
+  const fg = document.getElementById('favorites-grid');
+  if (!state.favorites.length) {
+    fg.innerHTML = '<div class="empty-state"><span class="empty-icon">❤️</span><div class="empty-text">No favorites yet — heart a video to save it</div></div>';
+  } else {
+    fg.innerHTML = state.favorites.map(v => videoCardHTML(v)).join('');
+  }
+
+  // Playlists
+  const pg = document.getElementById('playlists-grid');
+  if (!state.playlists.length) {
+    pg.innerHTML = '<div class="empty-state"><span class="empty-icon">📂</span><div class="empty-text">No playlists yet — create one above</div></div>';
+  } else {
+    pg.innerHTML = state.playlists.map(pl => `
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:.75rem">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
+          <div style="font-weight:700">📂 ${escHtml(pl.name)}</div>
+          <div style="font-size:.75rem;color:var(--text3)">${pl.videos.length} videos</div>
+        </div>
+        ${pl.videos.length ? `<div class="video-grid" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))">${pl.videos.map(v => videoCardHTML(v)).join('')}</div>` : '<div style="color:var(--text3);font-size:.85rem">No videos yet</div>'}
+      </div>`).join('');
+  }
+}
+
+// ─────────────────────────────────────────────
+// HOME PAGE
+// ─────────────────────────────────────────────
+const TRENDING_TAGS = ['Trending music 2024','Gaming highlights','Movie trailers','Tutorial','Cooking','Science explained','Hip hop','Lo-fi beats'];
+
+async function renderHome() {
+  // Tags
+  const tags = document.getElementById('trending-tags');
+  tags.innerHTML = TRENDING_TAGS.map(t => `<div class="trend-tag" onclick="doSearch('${t}')">${t}</div>`).join('');
+
+  // Trending
+  loadSection('home-trending', 'trending videos 2024', 8);
+  loadSection('home-music', 'popular music videos 2024', 8);
+}
+
+async function loadSection(gridId, query, limit) {
+  const grid = document.getElementById(gridId);
+  grid.innerHTML = renderSkeletons(limit);
+  try {
+    const data = await searchYT(query, limit);
+    const results = data.results || data.data || data || [];
+    if (Array.isArray(results) && results.length) {
+      grid.innerHTML = results.map(v => videoCardHTML(v)).join('');
+    } else {
+      grid.innerHTML = '<div style="color:var(--text3);padding:1rem">No results</div>';
+    }
+  } catch(e) {
+    grid.innerHTML = `<div style="color:var(--red);padding:1rem;font-size:.85rem">⚠️ Could not load content — ${e.message}</div>`;
+  }
+}
+
+function renderSkeletons(n) {
+  return Array(n).fill(0).map(() => `
+    <div class="skel-card">
+      <div class="skel-thumb skeleton"></div>
+      <div class="skel-body">
+        <div class="skel-line skeleton" style="width:90%"></div>
+        <div class="skel-line skeleton skel-short"></div>
+      </div>
+    </div>`).join('');
+}
+
+// ─────────────────────────────────────────────
+// UTILS
+// ─────────────────────────────────────────────
+function formatViews(n) {
+  if (!n) return '';
+  if (n >= 1e9) return (n/1e9).toFixed(1)+'B views';
+  if (n >= 1e6) return (n/1e6).toFixed(1)+'M views';
+  if (n >= 1e3) return (n/1e3).toFixed(1)+'K views';
+  return n+' views';
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showToast(msg, type = 'info') {
+  const tc = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+  t.innerHTML = `<span>${icons[type]}</span><span>${escHtml(msg)}</span>`;
+  tc.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(20px)'; t.style.transition='all .3s'; setTimeout(() => t.remove(), 300); }, 3500);
+}
+
+// ─────────────────────────────────────────────
+// KEYBOARD SHORTCUTS
+// ─────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  const tag = e.target.tagName.toLowerCase();
+  if (tag === 'input' || tag === 'textarea') return;
+  if (e.key === '/') {
+    e.preventDefault();
+    document.getElementById('main-search').focus();
+  }
+});
+
+document.getElementById('main-search').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doSearch();
+  if (e.key === 'Escape') e.target.blur();
+});
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+navigate('home');
+</script>
+</body>
+</html>
