@@ -1,1229 +1,1578 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SkyStream</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #080810;
-  --bg2: #0d0d1a;
-  --surface: #111122;
-  --surface2: #181830;
-  --surface3: #1e1e38;
-  --border: rgba(255,255,255,.07);
-  --border2: rgba(255,255,255,.12);
-  --accent: #6c63ff;
-  --accent-h: #8a84ff;
-  --cyan: #00d4ff;
-  --green: #00e5a0;
-  --red: #ff4757;
-  --yellow: #ffd32a;
-  --text: #f0f0ff;
-  --text2: #a0a0c0;
-  --text3: #606080;
-  --font: 'Outfit', sans-serif;
-  --mono: 'JetBrains Mono', monospace;
-  --radius: 12px;
-  --sidebar-w: 220px;
-  --header-h: 60px;
-}
-[data-theme="light"] {
-  --bg: #f5f5fa;
-  --bg2: #ebebf5;
-  --surface: #ffffff;
-  --surface2: #f0f0f8;
-  --surface3: #e8e8f5;
-  --border: rgba(0,0,0,.08);
-  --border2: rgba(0,0,0,.15);
-  --text: #0d0d20;
-  --text2: #404060;
-  --text3: #9090b0;
+  --bg:        #0a0a0f;
+  --bg2:       #0f0f1a;
+  --surface:   #141420;
+  --surface2:  #1a1a2e;
+  --surface3:  #20203a;
+  --border:    rgba(99,102,241,.15);
+  --border2:   rgba(99,102,241,.3);
+  --indigo:    #4f46e5;
+  --indigo2:   #6366f1;
+  --indigo3:   #818cf8;
+  --cyan:      #06b6d4;
+  --cyan2:     #22d3ee;
+  --cyan3:     #67e8f9;
+  --indigo-glow: rgba(79,70,229,.12);
+  --cyan-glow:   rgba(6,182,212,.1);
+  --text:      #e8e8f5;
+  --text2:     #8b8baa;
+  --text3:     #4a4a6a;
+  --red:       #f43f5e;
+  --green:     #10b981;
+  --yellow:    #f59e0b;
+  --font:      'Plus Jakarta Sans', sans-serif;
+  --mono:      'JetBrains Mono', monospace;
+  --r:         12px;
+  --r2:        8px;
+  --sidebar-w: 234px;
+  --hh:        60px;
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+html,body{height:100%}
+body{
+  font-family:var(--font);background:var(--bg);color:var(--text);
+  overflow-x:hidden;
+}
 
 /* SCROLLBAR */
-::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:10px}
+::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--indigo)}
 
-/* BACKGROUND MESH */
+/* AMBIENT GLOW */
 body::before{
-  content:'';position:fixed;inset:0;
-  background:radial-gradient(ellipse 50% 60% at 10% 0%,rgba(108,99,255,.12),transparent 60%),
-             radial-gradient(ellipse 40% 50% at 90% 100%,rgba(0,212,255,.07),transparent 60%);
-  pointer-events:none;z-index:0;
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -5%, rgba(79,70,229,.1) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 60% at 95% 95%, rgba(6,182,212,.06) 0%, transparent 50%),
+    radial-gradient(ellipse 30% 40% at 5% 80%, rgba(99,102,241,.05) 0%, transparent 50%);
 }
 
 /* LAYOUT */
 #app{display:flex;flex-direction:column;height:100vh;position:relative;z-index:1}
 
-/* HEADER */
+/* ─────────────────────────────────────
+   HEADER
+───────────────────────────────────── */
 header{
-  height:var(--header-h);display:flex;align-items:center;
-  padding:0 1.25rem;gap:1rem;
-  background:rgba(8,8,16,.85);backdrop-filter:blur(20px);
+  height:var(--hh);flex-shrink:0;
+  display:flex;align-items:center;padding:0 1.25rem;gap:1rem;
+  background:rgba(10,10,15,.9);backdrop-filter:blur(24px);
   border-bottom:1px solid var(--border);
-  position:sticky;top:0;z-index:200;flex-shrink:0;
+  position:sticky;top:0;z-index:300;
 }
 .logo{
-  font-size:1.4rem;font-weight:900;letter-spacing:-.03em;
-  background:linear-gradient(135deg,var(--accent),var(--cyan));
+  font-size:1.35rem;font-weight:800;white-space:nowrap;
+  cursor:pointer;flex-shrink:0;letter-spacing:-.02em;
+  background:linear-gradient(135deg,var(--indigo3),var(--cyan2));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  white-space:nowrap;cursor:pointer;flex-shrink:0;
 }
 .search-wrap{
-  flex:1;max-width:600px;margin:0 auto;
+  flex:1;max-width:560px;margin:0 auto;
   display:flex;align-items:center;
-  background:var(--surface2);border:1px solid var(--border);
+  background:var(--surface);border:1px solid var(--border);
   border-radius:999px;overflow:hidden;
   transition:border-color .2s,box-shadow .2s;
 }
-.search-wrap:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,99,255,.15)}
+.search-wrap:focus-within{
+  border-color:var(--indigo2);
+  box-shadow:0 0 0 3px rgba(99,102,241,.12),0 0 24px rgba(79,70,229,.08);
+}
 .search-wrap input{
-  flex:1;padding:.55rem 1rem;background:none;border:none;outline:none;
-  color:var(--text);font-family:var(--font);font-size:.9rem;
+  flex:1;padding:.58rem 1.1rem;background:none;border:none;outline:none;
+  color:var(--text);font-family:var(--font);font-size:.88rem;
 }
 .search-wrap input::placeholder{color:var(--text3)}
 .search-btn{
-  padding:.5rem 1.1rem;background:var(--accent);border:none;cursor:pointer;
-  color:#fff;font-size:.85rem;font-weight:600;transition:background .2s;
+  margin-right:4px;width:34px;height:34px;border-radius:999px;
+  background:linear-gradient(135deg,var(--indigo),var(--cyan));
+  border:none;cursor:pointer;color:#fff;font-size:.95rem;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:opacity .2s;
+}
+.search-btn:hover{opacity:.85}
+.hdr-btns{display:flex;gap:.5rem;flex-shrink:0}
+.hbtn{
   display:flex;align-items:center;gap:.4rem;
+  padding:.42rem .9rem;border-radius:999px;
+  border:1px solid var(--border);background:transparent;
+  color:var(--text2);font-family:var(--font);font-size:.8rem;font-weight:600;
+  cursor:pointer;transition:all .2s;white-space:nowrap;
 }
-.search-btn:hover{background:var(--accent-h)}
-.header-actions{display:flex;align-items:center;gap:.5rem;flex-shrink:0}
-.icon-btn{
-  width:36px;height:36px;border-radius:8px;border:1px solid var(--border);
-  background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;
-  color:var(--text2);font-size:1rem;transition:all .2s;
+.hbtn:hover{border-color:var(--indigo2);color:var(--indigo3)}
+.hbtn.cta{
+  background:linear-gradient(135deg,var(--indigo),var(--cyan));
+  border-color:transparent;color:#fff;
 }
-.icon-btn:hover{background:var(--surface3);color:var(--text)}
+.hbtn.cta:hover{opacity:.9}
 
-/* BODY LAYOUT */
+/* ─────────────────────────────────────
+   BODY WRAP
+───────────────────────────────────── */
 .body-wrap{display:flex;flex:1;overflow:hidden}
 
-/* SIDEBAR */
-nav#sidebar{
-  width:var(--sidebar-w);flex-shrink:0;
+/* ─────────────────────────────────────
+   SIDEBAR
+───────────────────────────────────── */
+#sidebar{
+  width:var(--sidebar-w);flex-shrink:0;overflow-y:auto;
   background:var(--bg2);border-right:1px solid var(--border);
-  display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;
-  transition:transform .3s,width .3s;
+  display:flex;flex-direction:column;padding:.75rem 0 1rem;
 }
-.nav-section{padding:1rem .75rem .5rem;font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)}
+.nav-sect{
+  padding:.75rem 1rem .3rem;
+  font-family:var(--mono);font-size:.62rem;font-weight:500;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--text3);
+}
 .nav-item{
-  display:flex;align-items:center;gap:.75rem;
-  padding:.6rem .9rem;border-radius:10px;margin:2px .5rem;
-  cursor:pointer;color:var(--text2);font-size:.88rem;font-weight:500;
-  transition:all .2s;position:relative;
+  display:flex;align-items:center;gap:.7rem;
+  padding:.6rem 1rem;margin:.1rem .5rem;border-radius:var(--r2);
+  cursor:pointer;color:var(--text2);font-size:.86rem;font-weight:500;
+  transition:all .18s;position:relative;
 }
 .nav-item:hover{background:var(--surface);color:var(--text)}
-.nav-item.active{background:rgba(108,99,255,.15);color:var(--accent)}
-.nav-item.active::before{content:'';position:absolute;left:-4px;top:50%;transform:translateY(-50%);height:60%;width:3px;background:var(--accent);border-radius:2px}
-.nav-icon{font-size:1.1rem;width:22px;text-align:center;flex-shrink:0}
-.nav-badge{margin-left:auto;background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;padding:.1rem .45rem;border-radius:999px}
+.nav-item.on{
+  background:var(--indigo-glow);color:var(--indigo3);
+  border:1px solid var(--border);
+}
+.nav-item.on::before{
+  content:'';position:absolute;left:-1px;top:22%;height:56%;width:2px;
+  background:linear-gradient(180deg,var(--indigo2),var(--cyan));
+  border-radius:0 2px 2px 0;
+}
+.nav-icon{font-size:.95rem;width:18px;text-align:center;flex-shrink:0;opacity:.8}
+.nav-item.on .nav-icon{opacity:1}
+.nav-divider{height:1px;background:var(--border);margin:.4rem .75rem}
+.nav-badge{
+  margin-left:auto;background:var(--indigo);color:#fff;
+  font-size:.62rem;font-weight:700;font-family:var(--mono);
+  padding:.1rem .42rem;border-radius:999px;
+}
 
-/* MAIN CONTENT */
-#main-content{flex:1;overflow-y:auto;overflow-x:hidden}
+/* ─────────────────────────────────────
+   MAIN
+───────────────────────────────────── */
+#main{flex:1;overflow-y:auto;overflow-x:hidden}
 
-/* HOME PAGE */
-#page-home{padding:0}
-.hero-section{
+/* ─────────────────────────────────────
+   HOME
+───────────────────────────────────── */
+.home-hero{
   padding:2.5rem 2rem 2rem;
-  background:linear-gradient(180deg,rgba(108,99,255,.08) 0%,transparent 100%);
   border-bottom:1px solid var(--border);
+  background:linear-gradient(180deg,rgba(79,70,229,.07) 0%,transparent 100%);
+  position:relative;overflow:hidden;
 }
-.hero-title{font-size:clamp(1.5rem,3vw,2.2rem);font-weight:800;letter-spacing:-.02em;margin-bottom:.4rem}
-.hero-sub{color:var(--text2);font-size:.95rem}
-.trending-searches{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
-.trend-tag{
-  padding:.35rem .85rem;border-radius:999px;
-  background:var(--surface2);border:1px solid var(--border);
-  font-size:.8rem;color:var(--text2);cursor:pointer;transition:all .2s;
+.home-hero::before{
+  content:'SkyStream';
+  position:absolute;right:-1rem;top:50%;transform:translateY(-50%);
+  font-size:8rem;font-weight:800;letter-spacing:-.05em;
+  background:linear-gradient(135deg,rgba(79,70,229,.06),rgba(6,182,212,.04));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  pointer-events:none;white-space:nowrap;
 }
-.trend-tag:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
-
-.section-row{padding:1.5rem 1.5rem 0}
-.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
-.section-heading{font-size:1.05rem;font-weight:700;letter-spacing:-.01em}
-.section-more{font-size:.8rem;color:var(--accent);cursor:pointer;font-weight:600}
-.section-more:hover{text-decoration:underline}
-
-.video-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;padding-bottom:1.5rem}
-.video-card{
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-  overflow:hidden;cursor:pointer;transition:all .25s;
+.home-hero h1{
+  font-size:clamp(1.6rem,3.5vw,2.5rem);font-weight:800;
+  letter-spacing:-.03em;line-height:1.15;margin-bottom:.5rem;
 }
-.video-card:hover{transform:translateY(-3px);border-color:var(--border2);box-shadow:0 8px 30px rgba(0,0,0,.3)}
-.card-thumb{position:relative;aspect-ratio:16/9;background:var(--surface2);overflow:hidden}
-.card-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
-.video-card:hover .card-thumb img{transform:scale(1.03)}
-.card-duration{
-  position:absolute;bottom:.4rem;right:.4rem;
-  background:rgba(0,0,0,.85);color:#fff;
-  font-size:.7rem;font-weight:600;font-family:var(--mono);
-  padding:.2rem .5rem;border-radius:5px;
+.home-hero h1 span{
+  background:linear-gradient(135deg,var(--indigo3),var(--cyan2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
 }
-.card-thumb-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;background:linear-gradient(135deg,var(--surface2),var(--surface3))}
-.card-body{padding:.85rem}
-.card-title{font-size:.88rem;font-weight:600;line-height:1.4;margin-bottom:.4rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.card-meta{font-size:.75rem;color:var(--text3);display:flex;gap:.5rem;flex-wrap:wrap}
-.card-author{color:var(--text2);font-weight:500}
-
-/* SEARCH PAGE */
-#page-search{padding:1.5rem}
-.search-header{margin-bottom:1.25rem}
-.search-stats{font-size:.85rem;color:var(--text2)}
-.search-stats strong{color:var(--text)}
-.search-filters{display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap}
-.filter-btn{
-  padding:.35rem .9rem;border-radius:999px;border:1px solid var(--border);
-  background:var(--surface2);font-size:.8rem;color:var(--text2);cursor:pointer;
-  transition:all .2s;font-family:var(--font);
-}
-.filter-btn:hover,.filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-
-/* VIDEO PAGE */
-#page-video{padding:1.25rem;display:grid;grid-template-columns:1fr 340px;gap:1.25rem}
-@media(max-width:900px){#page-video{grid-template-columns:1fr}}
-.video-main{}
-.player-wrap{
-  background:#000;border-radius:var(--radius);overflow:hidden;
-  position:relative;aspect-ratio:16/9;
-}
-#video-el{width:100%;height:100%;display:block}
-.player-overlay{
-  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  background:rgba(0,0,0,.4);cursor:pointer;transition:opacity .2s;
-}
-.player-overlay.hidden{opacity:0;pointer-events:none}
-.play-big{
-  width:64px;height:64px;border-radius:50%;
-  background:rgba(108,99,255,.9);display:flex;align-items:center;justify-content:center;
-  font-size:1.5rem;transition:transform .2s;
-}
-.player-overlay:hover .play-big{transform:scale(1.1)}
-.player-controls{
-  position:absolute;bottom:0;left:0;right:0;
-  background:linear-gradient(transparent,rgba(0,0,0,.85));
-  padding:2rem .75rem .75rem;
-  display:flex;flex-direction:column;gap:.5rem;
-  opacity:0;transition:opacity .3s;
-}
-.player-wrap:hover .player-controls{opacity:1}
-.progress-bar{width:100%;height:4px;background:rgba(255,255,255,.2);border-radius:2px;cursor:pointer;position:relative}
-.progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .1s;position:relative}
-.progress-fill::after{content:'';position:absolute;right:-6px;top:-4px;width:12px;height:12px;background:#fff;border-radius:50%;box-shadow:0 0 4px rgba(0,0,0,.5)}
-.ctrl-row{display:flex;align-items:center;gap:.5rem}
-.ctrl-btn{background:none;border:none;cursor:pointer;color:#fff;font-size:1rem;padding:.25rem;opacity:.85;transition:opacity .2s}
-.ctrl-btn:hover{opacity:1}
-.vol-slider{width:70px;height:3px;cursor:pointer;accent-color:var(--accent)}
-.time-display{font-family:var(--mono);font-size:.72rem;color:rgba(255,255,255,.8);margin-left:.25rem}
-.ctrl-right{margin-left:auto;display:flex;gap:.5rem;align-items:center}
-
-.video-info{margin-top:1rem}
-.video-title-main{font-size:1.15rem;font-weight:700;letter-spacing:-.01em;line-height:1.4;margin-bottom:.75rem}
-.video-meta-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;padding-bottom:.75rem;border-bottom:1px solid var(--border)}
-.video-author{display:flex;align-items:center;gap:.6rem}
-.author-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;color:#fff;flex-shrink:0}
-.author-name{font-weight:600;font-size:.9rem}
-.author-subs{font-size:.75rem;color:var(--text3)}
-.action-btns{display:flex;gap:.5rem;flex-wrap:wrap}
-.action-btn{
-  display:flex;align-items:center;gap:.4rem;
-  padding:.45rem 1rem;border-radius:999px;border:1px solid var(--border);
-  background:var(--surface2);cursor:pointer;font-size:.82rem;font-weight:600;color:var(--text2);
-  transition:all .2s;font-family:var(--font);
-}
-.action-btn:hover{background:var(--surface3);color:var(--text)}
-.action-btn.active{background:rgba(108,99,255,.15);color:var(--accent);border-color:var(--accent)}
-
-.video-desc{
-  margin-top:.85rem;font-size:.85rem;color:var(--text2);line-height:1.7;
-  background:var(--surface);border-radius:var(--radius);padding:1rem;
-  cursor:pointer;
-}
-.video-desc.collapsed{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-
-.tabs-wrap{margin-top:1rem;border-bottom:1px solid var(--border)}
-.tabs{display:flex;gap:0}
-.tab-btn{
-  padding:.7rem 1.2rem;font-size:.85rem;font-weight:600;cursor:pointer;
-  background:none;border:none;color:var(--text3);border-bottom:2px solid transparent;
+.home-hero p{color:var(--text2);font-size:.9rem;margin-bottom:1.25rem}
+.tag-row{display:flex;gap:.5rem;flex-wrap:wrap}
+.tag{
+  padding:.3rem .8rem;border-radius:999px;
+  border:1px solid var(--border);background:transparent;
+  font-size:.78rem;color:var(--text2);cursor:pointer;
   font-family:var(--font);transition:all .2s;
 }
-.tab-btn:hover{color:var(--text2)}
-.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
-.tab-panel{display:none;padding:1rem 0}
-.tab-panel.active{display:block}
-
-/* DOWNLOAD PANEL */
-.download-section{margin-top:1rem}
-.dl-title{font-size:.9rem;font-weight:700;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
-.dl-options{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
-.dl-card{
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;
-}
-.dl-card-header{display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem}
-.dl-format-badge{padding:.2rem .6rem;border-radius:5px;font-size:.7rem;font-weight:700;font-family:var(--mono)}
-.dl-mp4{background:rgba(108,99,255,.15);color:var(--accent)}
-.dl-mp3{background:rgba(0,229,160,.15);color:var(--green)}
-.dl-format-name{font-weight:600;font-size:.85rem}
-select.quality-select{
-  width:100%;padding:.4rem .7rem;border-radius:8px;
-  background:var(--surface2);border:1px solid var(--border);
-  color:var(--text);font-family:var(--font);font-size:.82rem;
-  margin-bottom:.6rem;outline:none;cursor:pointer;
-}
-.dl-btn{
-  width:100%;padding:.5rem;border-radius:8px;border:none;cursor:pointer;
-  font-family:var(--font);font-size:.82rem;font-weight:700;transition:all .2s;
-  display:flex;align-items:center;justify-content:center;gap:.4rem;
-}
-.dl-btn-mp4{background:var(--accent);color:#fff}
-.dl-btn-mp4:hover{background:var(--accent-h)}
-.dl-btn-mp3{background:var(--green);color:#000}
-.dl-btn-mp3:hover{filter:brightness(1.1)}
-.dl-status{font-size:.75rem;margin-top:.5rem;text-align:center;min-height:1rem;color:var(--text3)}
-.dl-status.loading{color:var(--yellow)}
-.dl-status.success{color:var(--green)}
-.dl-status.error{color:var(--red)}
-
-/* RELATED SIDEBAR */
-.related-sidebar{display:flex;flex-direction:column;gap:.75rem}
-.related-title{font-size:.9rem;font-weight:700;margin-bottom:.25rem}
-.related-card{
-  display:flex;gap:.75rem;cursor:pointer;padding:.5rem;border-radius:10px;
-  transition:background .2s;
-}
-.related-card:hover{background:var(--surface2)}
-.related-thumb{width:120px;height:68px;border-radius:8px;overflow:hidden;flex-shrink:0;background:var(--surface3)}
-.related-thumb img{width:100%;height:100%;object-fit:cover}
-.related-info{flex:1;min-width:0}
-.related-t{font-size:.8rem;font-weight:600;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4;margin-bottom:.3rem}
-.related-m{font-size:.72rem;color:var(--text3)}
-
-/* LYRICS */
-.lyrics-content{
-  font-size:.88rem;line-height:2;white-space:pre-wrap;
-  background:var(--surface);border-radius:var(--radius);padding:1.25rem;
-  max-height:400px;overflow-y:auto;color:var(--text2);
+.tag:hover{
+  background:var(--indigo-glow);border-color:var(--indigo2);color:var(--indigo3);
 }
 
-/* LIBRARY PAGE */
-#page-library{padding:1.5rem}
-.lib-tabs{display:flex;gap:.5rem;margin-bottom:1.25rem}
-.lib-tab{
-  padding:.45rem 1rem;border-radius:8px;border:1px solid var(--border);
-  background:var(--surface2);font-size:.82rem;font-weight:600;color:var(--text2);
+.sec-row{padding:1.75rem 1.5rem 0}
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.sec-title{
+  font-size:1rem;font-weight:700;letter-spacing:-.01em;
+  display:flex;align-items:center;gap:.5rem;
+}
+.sec-title span{
+  display:inline-block;width:3px;height:14px;
+  background:linear-gradient(180deg,var(--indigo2),var(--cyan));
+  border-radius:2px;
+}
+.sec-more{
+  font-size:.78rem;color:var(--text3);cursor:pointer;font-weight:600;
+  transition:color .2s;
+}
+.sec-more:hover{color:var(--cyan2)}
+
+/* ─────────────────────────────────────
+   VIDEO GRID & CARD
+───────────────────────────────────── */
+.vgrid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:.9rem;padding-bottom:1.75rem;
+}
+.vcard{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;cursor:pointer;
+  transition:all .25s;
+}
+.vcard:hover{
+  border-color:rgba(99,102,241,.4);
+  transform:translateY(-3px);
+  box-shadow:0 12px 40px rgba(0,0,0,.4),0 0 0 1px rgba(99,102,241,.15),0 0 30px rgba(79,70,229,.08);
+}
+.vcard-thumb{position:relative;aspect-ratio:16/9;background:var(--surface2);overflow:hidden}
+.vcard-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.vcard:hover .vcard-thumb img{transform:scale(1.04)}
+.vcard-ph{
+  width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+  font-size:2rem;
+  background:linear-gradient(135deg,var(--surface2),var(--surface3));
+}
+.vcard-dur{
+  position:absolute;bottom:.4rem;right:.4rem;
+  background:rgba(0,0,0,.85);color:#fff;
+  font-family:var(--mono);font-size:.68rem;
+  padding:.17rem .45rem;border-radius:4px;
+}
+.vcard-body{padding:.85rem}
+.vcard-title{
+  font-size:.85rem;font-weight:600;line-height:1.45;margin-bottom:.4rem;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.vcard-meta{font-size:.73rem;color:var(--text3);display:flex;gap:.5rem;flex-wrap:wrap}
+.vcard-author{color:var(--text2);font-weight:500}
+
+/* ─────────────────────────────────────
+   SEARCH PAGE
+───────────────────────────────────── */
+#page-search{padding:1.5rem}
+.srch-head{margin-bottom:1.25rem}
+.srch-stats{font-size:.85rem;color:var(--text2);margin-bottom:.7rem}
+.srch-stats strong{color:var(--cyan2)}
+.filter-row{display:flex;gap:.5rem;flex-wrap:wrap}
+.fbtn{
+  padding:.3rem .8rem;border-radius:999px;border:1px solid var(--border);
+  background:transparent;font-size:.78rem;color:var(--text2);
   cursor:pointer;font-family:var(--font);transition:all .2s;
 }
-.lib-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-.lib-panel{display:none}
-.lib-panel.active{display:block}
-.empty-state{
-  text-align:center;padding:4rem 2rem;color:var(--text3);
+.fbtn:hover,.fbtn.on{
+  background:var(--indigo-glow);border-color:var(--indigo2);color:var(--indigo3);
 }
-.empty-icon{font-size:3rem;margin-bottom:1rem;display:block}
-.empty-text{font-size:.95rem}
 
-/* PLAYLIST CREATOR */
-.playlist-create{
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-  padding:1.25rem;margin-bottom:1.25rem;
+/* ─────────────────────────────────────
+   VIDEO PAGE
+───────────────────────────────────── */
+#page-video{
+  padding:1.25rem;
+  display:grid;grid-template-columns:1fr 340px;gap:1.25rem;
 }
-.playlist-form{display:flex;gap:.75rem}
-.playlist-input{
-  flex:1;padding:.5rem .85rem;border-radius:8px;background:var(--surface2);
-  border:1px solid var(--border);color:var(--text);font-family:var(--font);
-  font-size:.88rem;outline:none;
-}
-.playlist-input:focus{border-color:var(--accent)}
-.create-btn{
-  padding:.5rem 1rem;border-radius:8px;background:var(--accent);
-  border:none;color:#fff;font-family:var(--font);font-size:.85rem;font-weight:700;
-  cursor:pointer;white-space:nowrap;transition:background .2s;
-}
-.create-btn:hover{background:var(--accent-h)}
+@media(max-width:940px){#page-video{grid-template-columns:1fr}}
 
-/* TIKTOK PAGE */
-#page-tiktok{padding:1.5rem;max-width:600px;margin:0 auto}
-.tiktok-form{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:2rem}
-.tiktok-title{font-size:1.2rem;font-weight:800;margin-bottom:.5rem}
-.tiktok-sub{font-size:.85rem;color:var(--text2);margin-bottom:1.25rem}
-.url-input-wrap{display:flex;gap:.75rem;flex-direction:column}
-.big-input{
-  width:100%;padding:.7rem 1rem;border-radius:10px;background:var(--surface2);
-  border:1px solid var(--border);color:var(--text);font-family:var(--font);
-  font-size:.9rem;outline:none;
+.player-box{
+  border-radius:var(--r);overflow:hidden;
+  aspect-ratio:16/9;background:#000;
+  border:1px solid var(--border);
+  box-shadow:0 0 60px rgba(79,70,229,.1);
 }
-.big-input:focus{border-color:var(--accent)}
-.big-btn{
-  padding:.7rem 1.5rem;border-radius:10px;background:linear-gradient(135deg,#010101,#69C9D0);
-  border:none;color:#fff;font-family:var(--font);font-size:.9rem;font-weight:700;
+.player-box iframe{width:100%;height:100%;border:none;display:block}
+
+.vid-info{margin-top:1rem}
+.vid-title-text{
+  font-size:1.15rem;font-weight:700;letter-spacing:-.02em;
+  line-height:1.4;margin-bottom:.85rem;
+}
+.vid-meta-row{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:.75rem;
+  padding-bottom:.85rem;border-bottom:1px solid var(--border);
+}
+.vid-author{display:flex;align-items:center;gap:.65rem}
+.ava{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,var(--indigo),var(--cyan));
+  display:flex;align-items:center;justify-content:center;
+  font-size:.9rem;font-weight:800;color:#fff;flex-shrink:0;
+}
+.ava-name{font-weight:600;font-size:.88rem}
+.ava-sub{font-size:.73rem;color:var(--text3)}
+.act-row{display:flex;gap:.5rem;flex-wrap:wrap}
+.abtn{
+  display:flex;align-items:center;gap:.35rem;
+  padding:.4rem .85rem;border-radius:999px;
+  border:1px solid var(--border);background:transparent;
+  font-size:.8rem;font-weight:600;color:var(--text2);
+  cursor:pointer;font-family:var(--font);transition:all .2s;
+}
+.abtn:hover{border-color:var(--indigo2);color:var(--indigo3)}
+.abtn.on{background:var(--indigo-glow);border-color:var(--indigo2);color:var(--indigo3)}
+
+.vid-desc{
+  margin-top:.85rem;font-size:.84rem;color:var(--text2);line-height:1.75;
+  background:var(--surface);border-radius:var(--r2);padding:1rem;
+  border:1px solid var(--border);cursor:pointer;
+}
+.vid-desc.coll{
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+}
+
+/* TABS */
+.tabs-bar{
+  display:flex;margin-top:1rem;
+  border-bottom:1px solid var(--border);gap:0;
+}
+.tbb{
+  padding:.65rem 1.1rem;font-size:.82rem;font-weight:600;
+  cursor:pointer;background:none;border:none;color:var(--text3);
+  border-bottom:2px solid transparent;font-family:var(--font);
+  transition:all .2s;
+}
+.tbb:hover{color:var(--text2)}
+.tbb.on{color:var(--indigo3);border-bottom-color:var(--indigo2)}
+.tab-pane{display:none;padding:.85rem 0}
+.tab-pane.on{display:block}
+
+/* DOWNLOAD */
+.dl-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+@media(max-width:520px){.dl-grid{grid-template-columns:1fr}}
+.dl-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r2);padding:1rem;
+}
+.dl-badge{
+  display:inline-block;padding:.18rem .55rem;border-radius:4px;
+  font-family:var(--mono);font-size:.68rem;font-weight:600;margin-bottom:.6rem;
+}
+.dl-badge.v{background:rgba(99,102,241,.15);color:var(--indigo3)}
+.dl-badge.a{background:rgba(6,182,212,.12);color:var(--cyan2)}
+.dl-name{font-size:.84rem;font-weight:700;margin-bottom:.75rem}
+.qsel{
+  width:100%;padding:.42rem .7rem;border-radius:var(--r2);
+  background:var(--surface2);border:1px solid var(--border);
+  color:var(--text);font-family:var(--font);font-size:.82rem;
+  outline:none;cursor:pointer;margin-bottom:.6rem;
+  transition:border-color .2s;
+}
+.qsel:focus{border-color:var(--indigo2)}
+.dl-btn{
+  width:100%;padding:.52rem;border-radius:var(--r2);border:none;
+  font-family:var(--font);font-size:.82rem;font-weight:700;
+  cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:.4rem;
+}
+.dl-btn.v{background:linear-gradient(135deg,var(--indigo),var(--indigo2));color:#fff}
+.dl-btn.v:hover{opacity:.9}
+.dl-btn.a{background:linear-gradient(135deg,var(--cyan),var(--cyan2));color:#000}
+.dl-btn.a:hover{opacity:.9}
+.dl-st{font-size:.74rem;margin-top:.5rem;text-align:center;min-height:1.1rem;color:var(--text3)}
+.dl-st.loading{color:var(--yellow)}
+.dl-st.ok{color:var(--green)}
+.dl-st.err{color:var(--red)}
+
+/* LYRICS / WIKI */
+.lyrics-box{
+  font-size:.88rem;line-height:2;white-space:pre-wrap;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r2);padding:1.25rem;
+  max-height:420px;overflow-y:auto;color:var(--text2);
+}
+.wiki-box{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r2);padding:1.25rem;
+}
+.wiki-box h3{font-size:1rem;font-weight:700;color:var(--indigo3);margin-bottom:.65rem}
+.wiki-box p{font-size:.84rem;color:var(--text2);line-height:1.75}
+
+/* RELATED */
+.rel-head{
+  font-size:.9rem;font-weight:700;margin-bottom:.85rem;
+  color:var(--text);
+}
+.rel-list{display:flex;flex-direction:column;gap:.6rem}
+.rel-item{
+  display:flex;gap:.75rem;cursor:pointer;
+  padding:.5rem;border-radius:var(--r2);transition:background .2s;
+}
+.rel-item:hover{background:var(--surface2)}
+.rel-thumb{
+  width:120px;height:68px;border-radius:var(--r2);
+  overflow:hidden;flex-shrink:0;background:var(--surface2);
+}
+.rel-thumb img{width:100%;height:100%;object-fit:cover}
+.rel-info{flex:1;min-width:0}
+.rel-t{
+  font-size:.8rem;font-weight:600;line-height:1.4;margin-bottom:.3rem;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.rel-m{font-size:.72rem;color:var(--text3)}
+
+/* ─────────────────────────────────────
+   REELS
+───────────────────────────────────── */
+#page-reels{
+  height:calc(100vh - var(--hh));
+  overflow:hidden;background:#000;
+  position:relative;
+}
+.reels-cont{
+  height:100%;overflow-y:scroll;
+  scroll-snap-type:y mandatory;
+  -webkit-overflow-scrolling:touch;
+}
+.reels-cont::-webkit-scrollbar{display:none}
+.reel{
+  height:calc(100vh - var(--hh));
+  scroll-snap-align:start;
+  position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  background:#000;
+}
+.reel-bg{
+  position:absolute;inset:-20px;z-index:0;
+  background-size:cover;background-position:center;
+  filter:blur(24px) brightness(.3) saturate(1.4);
+  transform:scale(1.1);
+}
+/* Cyan top-line per reel */
+.reel-topline{
+  position:absolute;top:0;left:0;right:0;height:2px;z-index:6;
+  background:linear-gradient(90deg,transparent 0%,var(--indigo2) 30%,var(--cyan2) 70%,transparent 100%);
+  opacity:.7;
+}
+.reel-player{
+  position:relative;z-index:1;
+  width:min(100%, calc((100vh - var(--hh)) * 9/16));
+  aspect-ratio:9/16;overflow:hidden;
+}
+.reel-iframe-wrap{
+  width:177.78%;height:100%;
+  margin-left:-38.89%;position:relative;
+}
+.reel-iframe-wrap iframe{width:100%;height:100%;border:none;pointer-events:none}
+.reel-click{position:absolute;inset:0;z-index:3;cursor:pointer}
+.reel-top-grad{
+  position:absolute;top:0;left:0;right:0;height:140px;z-index:2;pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,0,0,.65) 0%,transparent 100%);
+}
+.reel-bot-grad{
+  position:absolute;bottom:0;left:0;right:0;height:260px;z-index:2;pointer-events:none;
+  background:linear-gradient(0deg,rgba(0,0,0,.9) 0%,transparent 100%);
+}
+.reel-info{
+  position:absolute;bottom:0;left:0;right:64px;
+  padding:1.1rem 1rem 1.5rem;z-index:4;
+}
+.reel-author{
+  display:flex;align-items:center;gap:.55rem;
+  margin-bottom:.55rem;cursor:pointer;
+}
+.reel-ava{
+  width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--indigo),var(--cyan));
+  display:flex;align-items:center;justify-content:center;
+  font-size:.85rem;font-weight:800;color:#fff;
+  border:1.5px solid rgba(99,102,241,.5);
+}
+.reel-aname{font-size:.86rem;font-weight:700;color:#fff}
+.reel-caption{
+  font-size:.83rem;color:rgba(255,255,255,.88);line-height:1.5;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  margin-bottom:.45rem;
+}
+.reel-views{
+  font-family:var(--mono);font-size:.72rem;
+  color:var(--cyan2);letter-spacing:.04em;
+}
+.reel-actions{
+  position:absolute;right:0;bottom:0;width:60px;
+  padding:0 0 1.5rem;z-index:4;
+  display:flex;flex-direction:column;align-items:center;gap:1.2rem;
+}
+.reel-act{
+  display:flex;flex-direction:column;align-items:center;gap:.22rem;
+  cursor:pointer;
+}
+.reel-act-icon{
+  width:40px;height:40px;border-radius:50%;
+  background:rgba(255,255,255,.08);backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.12);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;transition:all .2s;
+}
+.reel-act:hover .reel-act-icon{
+  background:rgba(99,102,241,.25);
+  border-color:rgba(99,102,241,.5);
+}
+.reel-act.liked .reel-act-icon{
+  background:rgba(244,63,94,.2);
+  border-color:rgba(244,63,94,.5);
+}
+.reel-act-lbl{font-size:.62rem;color:rgba(255,255,255,.55);font-family:var(--mono)}
+
+/* ─────────────────────────────────────
+   LIBRARY
+───────────────────────────────────── */
+#page-library{padding:1.5rem}
+.lib-title{
+  font-size:1.4rem;font-weight:800;letter-spacing:-.02em;margin-bottom:.3rem;
+}
+.lib-sub{font-size:.84rem;color:var(--text2);margin-bottom:1.25rem}
+.lib-tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.25rem}
+.libt{
+  padding:.38rem .9rem;border-radius:var(--r2);
+  border:1px solid var(--border);background:transparent;
+  font-size:.8rem;font-weight:600;color:var(--text2);
+  cursor:pointer;font-family:var(--font);transition:all .2s;
+}
+.libt.on{
+  background:var(--indigo-glow);border-color:var(--indigo2);color:var(--indigo3);
+}
+.lib-pane{display:none}
+.lib-pane.on{display:block}
+.empty{text-align:center;padding:4rem 2rem;color:var(--text3)}
+.empty-i{font-size:2.5rem;display:block;margin-bottom:.75rem;opacity:.4}
+.pl-create{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r2);padding:1rem;margin-bottom:1rem;
+  display:flex;gap:.65rem;
+}
+.pl-inp{
+  flex:1;padding:.46rem .85rem;border-radius:var(--r2);
+  background:var(--surface2);border:1px solid var(--border);
+  color:var(--text);font-family:var(--font);font-size:.86rem;outline:none;
+}
+.pl-inp:focus{border-color:var(--indigo2)}
+.pl-btn{
+  padding:.46rem 1rem;border-radius:var(--r2);
+  background:linear-gradient(135deg,var(--indigo),var(--cyan));
+  border:none;color:#fff;font-family:var(--font);
+  font-size:.84rem;font-weight:700;cursor:pointer;
+  white-space:nowrap;transition:opacity .2s;
+}
+.pl-btn:hover{opacity:.88}
+
+/* ─────────────────────────────────────
+   TIKTOK
+───────────────────────────────────── */
+#page-tiktok{padding:1.5rem;max-width:560px;margin:0 auto}
+.tt-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:2rem;
+}
+.tt-icon-wrap{
+  width:56px;height:56px;border-radius:var(--r);
+  background:linear-gradient(135deg,var(--indigo),var(--cyan));
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;margin-bottom:1rem;
+}
+.tt-title{font-size:1.3rem;font-weight:800;letter-spacing:-.02em;margin-bottom:.3rem}
+.tt-sub{font-size:.84rem;color:var(--text2);margin-bottom:1.25rem}
+.tt-inp{
+  width:100%;padding:.62rem 1rem;border-radius:var(--r2);
+  background:var(--surface2);border:1px solid var(--border);
+  color:var(--text);font-family:var(--font);font-size:.88rem;
+  outline:none;margin-bottom:.75rem;
+  transition:border-color .2s;
+}
+.tt-inp:focus{border-color:var(--indigo2)}
+.tt-btn{
+  width:100%;padding:.62rem;border-radius:var(--r2);border:none;
+  background:linear-gradient(135deg,var(--indigo),var(--cyan));
+  color:#fff;font-family:var(--font);font-size:.9rem;font-weight:700;
   cursor:pointer;transition:opacity .2s;
 }
-.big-btn:hover{opacity:.9}
+.tt-btn:hover{opacity:.88}
+#tt-status{margin-top:1rem;font-size:.84rem;min-height:1.2rem}
 
-/* LOADING SKELETON */
-.skeleton{
-  background:linear-gradient(90deg,var(--surface2) 25%,var(--surface3) 50%,var(--surface2) 75%);
-  background-size:200% 100%;
-  animation:shimmer 1.5s infinite;
-  border-radius:6px;
+/* ─────────────────────────────────────
+   TOAST
+───────────────────────────────────── */
+#toasts{
+  position:fixed;bottom:1.25rem;right:1.25rem;
+  z-index:9999;display:flex;flex-direction:column;gap:.5rem;
 }
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.skel-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.skel-thumb{aspect-ratio:16/9}
-.skel-body{padding:.85rem;display:flex;flex-direction:column;gap:.5rem}
-.skel-line{height:14px}
-.skel-short{width:60%}
-
-/* TOAST */
-#toast-container{position:fixed;bottom:1.5rem;right:1.5rem;z-index:999;display:flex;flex-direction:column;gap:.5rem}
 .toast{
-  background:var(--surface2);border:1px solid var(--border2);border-radius:10px;
-  padding:.75rem 1.1rem;font-size:.85rem;
-  animation:toastIn .3s ease;max-width:280px;
-  display:flex;align-items:center;gap:.6rem;
-  box-shadow:0 8px 30px rgba(0,0,0,.3);
+  background:var(--surface2);border:1px solid var(--border2);
+  border-radius:var(--r2);padding:.65rem 1rem;font-size:.82rem;
+  max-width:280px;display:flex;align-items:center;gap:.55rem;
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+  animation:tsin .25s ease;color:var(--text);
 }
-.toast.success{border-color:var(--green);color:var(--green)}
-.toast.error{border-color:var(--red);color:var(--red)}
-.toast.info{border-color:var(--accent);color:var(--accent)}
-@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+.toast.ok{border-color:rgba(16,185,129,.4);color:var(--green)}
+.toast.err{border-color:rgba(244,63,94,.4);color:var(--red)}
+.toast.info{border-color:var(--border2);color:var(--indigo3)}
+@keyframes tsin{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:translateX(0)}}
 
 /* SPINNER */
-.spinner{
-  width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);
-  border-radius:50%;animation:spin .8s linear infinite;
+.spin{
+  width:18px;height:18px;flex-shrink:0;
+  border:2px solid var(--border2);border-top-color:var(--indigo2);
+  border-radius:50%;animation:rot .7s linear infinite;
 }
-@keyframes spin{to{transform:rotate(360deg)}}
+.spin.cyan{border-top-color:var(--cyan2)}
+@keyframes rot{to{transform:rotate(360deg)}}
+
+/* SKELETON */
+.skel{
+  background:linear-gradient(90deg,var(--surface) 25%,var(--surface2) 50%,var(--surface) 75%);
+  background-size:200%;animation:sk 1.6s infinite;border-radius:6px;
+}
+@keyframes sk{from{background-position:200%}to{background-position:-200%}}
+.skel-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;
+}
+
+/* CORS INFO BANNER */
+.cors-banner{
+  background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);
+  border-radius:var(--r2);padding:.75rem 1rem;margin-bottom:1rem;
+  font-size:.8rem;color:var(--yellow);display:flex;align-items:flex-start;gap:.6rem;
+  line-height:1.6;
+}
+.cors-banner strong{color:#fff}
 
 /* MOBILE NAV */
-.mobile-nav{
-  display:none;
-  position:fixed;bottom:0;left:0;right:0;
+.mob-nav{
+  display:none;position:fixed;bottom:0;left:0;right:0;
   background:var(--bg2);border-top:1px solid var(--border);
-  padding:.5rem;z-index:200;
-  justify-content:space-around;
+  padding:.45rem;z-index:200;justify-content:space-around;
 }
-.mob-btn{
-  display:flex;flex-direction:column;align-items:center;gap:.2rem;
-  background:none;border:none;cursor:pointer;color:var(--text3);font-size:.6rem;font-family:var(--font);
-  padding:.35rem .75rem;border-radius:8px;transition:all .2s;
+.mob-nb{
+  display:flex;flex-direction:column;align-items:center;gap:.18rem;
+  background:none;border:none;cursor:pointer;
+  color:var(--text3);font-size:.6rem;font-family:var(--font);
+  padding:.3rem .6rem;border-radius:var(--r2);transition:all .2s;
 }
-.mob-btn .mob-icon{font-size:1.2rem}
-.mob-btn.active{color:var(--accent)}
+.mob-nb .mi{font-size:1.05rem}
+.mob-nb.on{color:var(--indigo3)}
 
 @media(max-width:768px){
-  nav#sidebar{display:none}
-  .mobile-nav{display:flex}
-  #main-content{padding-bottom:70px}
-  .dl-options{grid-template-columns:1fr}
-  header{padding:0 .75rem}
-  .header-actions .icon-btn:not(.always){display:none}
+  #sidebar{display:none}
+  .mob-nav{display:flex}
+  #main{padding-bottom:65px}
+  .hdr-btns .hbtn:not(.always){display:none}
 }
 </style>
 </head>
 <body>
 <div id="app">
-  <!-- HEADER -->
-  <header>
-    <div class="logo" onclick="navigate('home')">Sky<span style="color:var(--cyan);-webkit-text-fill-color:var(--cyan)">Stream</span></div>
-    <div class="search-wrap">
-      <input type="text" id="main-search" placeholder="Search videos, music, channels..." autocomplete="off">
-      <button class="search-btn" onclick="doSearch()">
-        <span>🔍</span>
-      </button>
+
+<!-- HEADER -->
+<header>
+  <div class="logo" onclick="nav('home')">SkyStream</div>
+  <div class="search-wrap">
+    <input type="text" id="msearch" placeholder="Search videos, music, channels…" autocomplete="off">
+    <button class="search-btn" onclick="doSearch()">⌕</button>
+  </div>
+  <div class="hdr-btns">
+    <button class="hbtn cta always" onclick="nav('reels')">▶ Reels</button>
+    <button class="hbtn always" onclick="nav('library')">Library</button>
+  </div>
+</header>
+
+<div class="body-wrap">
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="nav-item on" id="sn-home" onclick="nav('home')">
+    <span class="nav-icon">⌂</span> Home
+  </div>
+  <div class="nav-item" id="sn-reels" onclick="nav('reels')">
+    <span class="nav-icon">▶</span> Reels
+    <span class="nav-badge">NEW</span>
+  </div>
+  <div class="nav-divider"></div>
+  <div class="nav-sect">Discover</div>
+  <div class="nav-item" onclick="doSearch('trending videos 2024')">
+    <span class="nav-icon">↑</span> Trending
+  </div>
+  <div class="nav-item" onclick="doSearch('popular music videos 2024')">
+    <span class="nav-icon">♪</span> Music
+  </div>
+  <div class="nav-item" onclick="doSearch('gaming videos 2024')">
+    <span class="nav-icon">◈</span> Gaming
+  </div>
+  <div class="nav-item" onclick="doSearch('cinematic short film 4k')">
+    <span class="nav-icon">◻</span> Films
+  </div>
+  <div class="nav-divider"></div>
+  <div class="nav-sect">Library</div>
+  <div class="nav-item" id="sn-library" onclick="nav('library','history')">
+    <span class="nav-icon">◷</span> History
+  </div>
+  <div class="nav-item" onclick="nav('library','favorites')">
+    <span class="nav-icon">♡</span> Favorites
+  </div>
+  <div class="nav-item" onclick="nav('library','playlists')">
+    <span class="nav-icon">≡</span> Playlists
+  </div>
+  <div class="nav-divider"></div>
+  <div class="nav-item" id="sn-tiktok" onclick="nav('tiktok')">
+    <span class="nav-icon">↓</span> TikTok DL
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div id="main">
+
+  <!-- HOME -->
+  <div id="page-home" class="page">
+    <div class="home-hero">
+      <h1>Stream. Discover.<br><span>Download.</span></h1>
+      <p>Millions of videos, music & more — all in one place.</p>
+      <div class="tag-row" id="htags"></div>
     </div>
-    <div class="header-actions">
-      <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme">☀️</button>
-      <button class="icon-btn always" onclick="navigate('library')" title="Library">📚</button>
+    <div id="cors-note" style="padding:1rem 1.5rem 0;display:none">
+      <div class="cors-banner">
+        <span>⚠️</span>
+        <div><strong>CORS Proxy Active</strong> — API calls are routed through allorigins.win to bypass browser CORS restrictions. If results don't load, try opening this file from a local server or deploy to Vercel/Netlify.</div>
+      </div>
     </div>
-  </header>
+    <div class="sec-row">
+      <div class="sec-head">
+        <div class="sec-title"><span></span>Trending Now</div>
+        <div class="sec-more" onclick="doSearch('trending 2024')">See all →</div>
+      </div>
+      <div class="vgrid" id="g-trending"></div>
+    </div>
+    <div class="sec-row">
+      <div class="sec-head">
+        <div class="sec-title"><span></span>Popular Music</div>
+        <div class="sec-more" onclick="doSearch('popular music 2024')">See all →</div>
+      </div>
+      <div class="vgrid" id="g-music"></div>
+    </div>
+    <div class="sec-row">
+      <div class="sec-head">
+        <div class="sec-title"><span></span>Gaming & Esports</div>
+        <div class="sec-more" onclick="doSearch('gaming highlights 2024')">See all →</div>
+      </div>
+      <div class="vgrid" id="g-gaming"></div>
+    </div>
+    <div style="height:2rem"></div>
+  </div>
 
-  <div class="body-wrap">
-    <!-- SIDEBAR -->
-    <nav id="sidebar">
-      <div style="height:.75rem"></div>
-      <div class="nav-item active" onclick="navigate('home')" id="nav-home">
-        <span class="nav-icon">🏠</span> Home
+  <!-- SEARCH -->
+  <div id="page-search" class="page" style="display:none">
+    <div class="srch-head">
+      <div class="srch-stats" id="sstats">Search for something to get started</div>
+      <div class="filter-row">
+        <button class="fbtn on" onclick="setF('all',this)">All</button>
+        <button class="fbtn" onclick="setF('short',this)">Short (&lt;4min)</button>
+        <button class="fbtn" onclick="setF('long',this)">Long (&gt;20min)</button>
       </div>
-      <div class="nav-item" onclick="doSearch('trending music 2024')" id="nav-trending">
-        <span class="nav-icon">🔥</span> Trending
-      </div>
-      <div class="nav-item" onclick="doSearch('music videos')" id="nav-music">
-        <span class="nav-icon">🎵</span> Music
-      </div>
-      <div class="nav-item" onclick="doSearch('gaming videos')" id="nav-gaming">
-        <span class="nav-icon">🎮</span> Gaming
-      </div>
-      <div class="nav-section">Library</div>
-      <div class="nav-item" onclick="navigate('library','history')" id="nav-history">
-        <span class="nav-icon">🕐</span> History
-      </div>
-      <div class="nav-item" onclick="navigate('library','favorites')" id="nav-favorites">
-        <span class="nav-icon">❤️</span> Favorites
-      </div>
-      <div class="nav-item" onclick="navigate('library','playlists')" id="nav-playlists">
-        <span class="nav-icon">📂</span> Playlists
-      </div>
-      <div class="nav-section">Tools</div>
-      <div class="nav-item" onclick="navigate('tiktok')" id="nav-tiktok">
-        <span class="nav-icon">📱</span> TikTok DL
-      </div>
-      <div style="flex:1"></div>
-    </nav>
+    </div>
+    <div class="vgrid" id="sresults"></div>
+  </div>
 
-    <!-- MAIN CONTENT -->
-    <div id="main-content">
-      <!-- HOME PAGE -->
-      <div id="page-home" class="page">
-        <div class="hero-section">
-          <div class="hero-title">What are you looking for? 🎬</div>
-          <div class="hero-sub">Search millions of videos, download music, explore content</div>
-          <div class="trending-searches" id="trending-tags"></div>
-        </div>
-        <div class="section-row">
-          <div class="section-header">
-            <div class="section-heading">🔥 Trending Now</div>
-          </div>
-          <div class="video-grid" id="home-trending"></div>
-        </div>
-        <div class="section-row">
-          <div class="section-header">
-            <div class="section-heading">🎵 Popular Music</div>
-          </div>
-          <div class="video-grid" id="home-music"></div>
-        </div>
-      </div>
-
-      <!-- SEARCH PAGE -->
-      <div id="page-search" class="page" style="display:none">
-        <div class="search-header">
-          <div class="search-stats" id="search-stats">Search for something to get started</div>
-          <div class="search-filters">
-            <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
-            <button class="filter-btn" onclick="setFilter('short',this)">Short (&lt;4min)</button>
-            <button class="filter-btn" onclick="setFilter('long',this)">Long (&gt;20min)</button>
-          </div>
-        </div>
-        <div class="video-grid" id="search-results"></div>
-      </div>
-
-      <!-- VIDEO PAGE -->
-      <div id="page-video" class="page" style="display:none">
-        <div class="video-main">
-          <div class="player-wrap" id="player-wrap">
-            <video id="video-el" controls preload="metadata"></video>
-            <div class="player-overlay hidden" id="player-overlay">
-              <div class="play-big">▶</div>
+  <!-- VIDEO PAGE -->
+  <div id="page-video" class="page" style="display:none">
+    <div>
+      <div class="player-box" id="pbox"></div>
+      <div class="vid-info">
+        <div class="vid-title-text" id="vtitle">—</div>
+        <div class="vid-meta-row">
+          <div class="vid-author">
+            <div class="ava" id="vava">?</div>
+            <div>
+              <div class="ava-name" id="vauthor">Unknown</div>
+              <div class="ava-sub" id="vmeta">—</div>
             </div>
           </div>
-          <div class="video-info">
-            <div class="video-title-main" id="vid-title">Loading...</div>
-            <div class="video-meta-row">
-              <div class="video-author">
-                <div class="author-avatar" id="author-avatar">?</div>
-                <div>
-                  <div class="author-name" id="vid-author">Unknown</div>
-                  <div class="author-subs" id="vid-views">0 views</div>
-                </div>
-              </div>
-              <div class="action-btns">
-                <button class="action-btn" id="btn-like" onclick="toggleLike()">👍 Like</button>
-                <button class="action-btn" id="btn-fav" onclick="toggleFavorite()">❤️ Save</button>
-                <button class="action-btn" onclick="addToPlaylistPrompt()">📂 Playlist</button>
-              </div>
+          <div class="act-row">
+            <button class="abtn" id="btn-like" onclick="togLike()">♡ Like</button>
+            <button class="abtn" id="btn-fav" onclick="togFav()">♡ Save</button>
+            <button class="abtn" onclick="addPl()">≡ Playlist</button>
+          </div>
+        </div>
+        <div class="vid-desc coll" id="vdesc" onclick="this.classList.toggle('coll')">—</div>
+        <div class="tabs-bar">
+          <button class="tbb on" onclick="swtab('dl',this)">⬇ Download</button>
+          <button class="tbb" onclick="swtab('lyrics',this)">♪ Lyrics</button>
+          <button class="tbb" onclick="swtab('wiki',this)">◎ About</button>
+        </div>
+        <div class="tab-pane on" id="tp-dl">
+          <div class="dl-grid">
+            <div class="dl-card">
+              <div class="dl-badge v">MP4</div>
+              <div class="dl-name">Video</div>
+              <select class="qsel" id="qmp4">
+                <option value="1080p">1080p HD</option>
+                <option value="720p" selected>720p</option>
+                <option value="480p">480p</option>
+                <option value="360p">360p</option>
+                <option value="240p">240p</option>
+                <option value="144p">144p</option>
+              </select>
+              <button class="dl-btn v" onclick="dlVid('mp4')">⬇ Download MP4</button>
+              <div class="dl-st" id="st-mp4"></div>
             </div>
-            <div class="video-desc collapsed" id="vid-desc" onclick="this.classList.toggle('collapsed')">Loading description...</div>
-
-            <!-- TABS -->
-            <div class="tabs-wrap">
-              <div class="tabs">
-                <button class="tab-btn active" onclick="switchTab('download',this)">⬇️ Download</button>
-                <button class="tab-btn" onclick="switchTab('lyrics',this)">🎵 Lyrics</button>
-                <button class="tab-btn" onclick="switchTab('wiki',this)">📖 About</button>
-                <button class="tab-btn" onclick="switchTab('comments',this)">💬 Comments</button>
-              </div>
-            </div>
-
-            <div class="tab-panel active" id="tab-download">
-              <div class="dl-options">
-                <div class="dl-card">
-                  <div class="dl-card-header">
-                    <div class="dl-format-badge dl-mp4">MP4</div>
-                    <div class="dl-format-name">Video Download</div>
-                  </div>
-                  <select class="quality-select" id="mp4-quality">
-                    <option value="1080p">1080p HD</option>
-                    <option value="720p" selected>720p</option>
-                    <option value="480p">480p</option>
-                    <option value="360p">360p</option>
-                    <option value="240p">240p</option>
-                    <option value="144p">144p</option>
-                  </select>
-                  <button class="dl-btn dl-btn-mp4" onclick="downloadVideo('mp4')">⬇️ Download MP4</button>
-                  <div class="dl-status" id="dl-mp4-status"></div>
-                </div>
-                <div class="dl-card">
-                  <div class="dl-card-header">
-                    <div class="dl-format-badge dl-mp3">MP3</div>
-                    <div class="dl-format-name">Audio Download</div>
-                  </div>
-                  <select class="quality-select" id="mp3-quality">
-                    <option value="320kbps">320kbps HQ</option>
-                    <option value="192kbps" selected>192kbps</option>
-                    <option value="128kbps">128kbps</option>
-                    <option value="64kbps">64kbps</option>
-                  </select>
-                  <button class="dl-btn dl-btn-mp3" onclick="downloadVideo('mp3')">🎵 Download MP3</button>
-                  <div class="dl-status" id="dl-mp3-status"></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="tab-panel" id="tab-lyrics">
-              <div id="lyrics-content"><div style="text-align:center;padding:2rem;color:var(--text3)">Click to load lyrics for this track...</div>
-              <button class="action-btn" style="margin:0 auto;display:flex" onclick="fetchLyrics()">🎵 Fetch Lyrics</button></div>
-            </div>
-
-            <div class="tab-panel" id="tab-wiki">
-              <div id="wiki-content"><div style="text-align:center;padding:2rem;color:var(--text3)">Click to load Wikipedia info...</div>
-              <button class="action-btn" style="margin:0 auto;display:flex" onclick="fetchWiki()">📖 Load Info</button></div>
-            </div>
-
-            <div class="tab-panel" id="tab-comments">
-              <div style="padding:2rem;text-align:center;color:var(--text3)">
-                <div style="font-size:2rem;margin-bottom:.5rem">💬</div>
-                <div>Comments coming in Phase 2</div>
-              </div>
+            <div class="dl-card">
+              <div class="dl-badge a">MP3</div>
+              <div class="dl-name">Audio</div>
+              <select class="qsel" id="qmp3">
+                <option value="320kbps">320kbps HQ</option>
+                <option value="192kbps" selected>192kbps</option>
+                <option value="128kbps">128kbps</option>
+                <option value="64kbps">64kbps</option>
+              </select>
+              <button class="dl-btn a" onclick="dlVid('mp3')">⬇ Download MP3</button>
+              <div class="dl-st" id="st-mp3"></div>
             </div>
           </div>
         </div>
-
-        <!-- RELATED -->
-        <div class="related-sidebar">
-          <div class="related-title">Up Next</div>
-          <div id="related-videos"></div>
+        <div class="tab-pane" id="tp-lyrics">
+          <div id="lyrics-wrap">
+            <div style="padding:2rem;text-align:center;color:var(--text3)">Load lyrics for this track</div>
+            <div style="text-align:center"><button class="abtn" onclick="loadLyrics()">♪ Fetch Lyrics</button></div>
+          </div>
+        </div>
+        <div class="tab-pane" id="tp-wiki">
+          <div id="wiki-wrap">
+            <div style="padding:2rem;text-align:center;color:var(--text3)">Load Wikipedia info</div>
+            <div style="text-align:center"><button class="abtn" onclick="loadWiki()">◎ Load Info</button></div>
+          </div>
         </div>
       </div>
+    </div>
+    <!-- RELATED -->
+    <div>
+      <div class="rel-head">Up Next</div>
+      <div class="rel-list" id="related"></div>
+    </div>
+  </div>
 
-      <!-- LIBRARY PAGE -->
-      <div id="page-library" class="page" style="display:none">
-        <div style="margin-bottom:1.25rem">
-          <div style="font-size:1.3rem;font-weight:800;margin-bottom:.25rem">Your Library</div>
-          <div style="font-size:.85rem;color:var(--text2)">Your saved content, history, and playlists</div>
-        </div>
-        <div class="lib-tabs">
-          <button class="lib-tab active" onclick="switchLibTab('history',this)">🕐 History</button>
-          <button class="lib-tab" onclick="switchLibTab('favorites',this)">❤️ Favorites</button>
-          <button class="lib-tab" onclick="switchLibTab('playlists',this)">📂 Playlists</button>
-        </div>
-        <div class="lib-panel active" id="lib-history">
-          <div class="video-grid" id="history-grid"></div>
-        </div>
-        <div class="lib-panel" id="lib-favorites">
-          <div class="video-grid" id="favorites-grid"></div>
-        </div>
-        <div class="lib-panel" id="lib-playlists">
-          <div class="playlist-create">
-            <div style="font-size:.9rem;font-weight:700;margin-bottom:.75rem">Create New Playlist</div>
-            <div class="playlist-form">
-              <input type="text" class="playlist-input" id="playlist-name" placeholder="Playlist name...">
-              <button class="create-btn" onclick="createPlaylist()">Create</button>
-            </div>
-          </div>
-          <div id="playlists-grid"></div>
-        </div>
-      </div>
-
-      <!-- TIKTOK PAGE -->
-      <div id="page-tiktok" class="page" style="display:none">
-        <div class="tiktok-form">
-          <div style="font-size:2rem;margin-bottom:.5rem">📱</div>
-          <div class="tiktok-title">TikTok Downloader</div>
-          <div class="tiktok-sub">Paste a TikTok video URL to download it without watermark</div>
-          <div class="url-input-wrap">
-            <input type="url" class="big-input" id="tiktok-url" placeholder="https://www.tiktok.com/@user/video/...">
-            <button class="big-btn" onclick="downloadTiktok()">⬇️ Download TikTok</button>
-          </div>
-          <div id="tiktok-status" style="margin-top:1rem;font-size:.85rem;text-align:center"></div>
-        </div>
-        <div style="margin-top:2rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem">
-          <div style="font-size:.85rem;font-weight:700;margin-bottom:.75rem">How to get a TikTok URL</div>
-          <div style="font-size:.82rem;color:var(--text2);line-height:1.8">
-            1. Open TikTok and find the video you want<br>
-            2. Tap "Share" → "Copy Link"<br>
-            3. Paste the link above and click Download
-          </div>
+  <!-- REELS -->
+  <div id="page-reels" class="page" style="display:none">
+    <div class="reels-cont" id="reels-cont">
+      <div class="reel" style="display:flex;align-items:center;justify-content:center">
+        <div style="text-align:center;color:var(--indigo3)">
+          <div class="spin cyan" style="width:32px;height:32px;border-width:3px;margin:0 auto 1rem"></div>
+          <div>Loading Reels…</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- MOBILE NAV -->
-  <div class="mobile-nav">
-    <button class="mob-btn active" onclick="navigate('home')" id="mob-home"><span class="mob-icon">🏠</span>Home</button>
-    <button class="mob-btn" onclick="navigate('search')" id="mob-search"><span class="mob-icon">🔍</span>Search</button>
-    <button class="mob-btn" onclick="navigate('library')" id="mob-library"><span class="mob-icon">📚</span>Library</button>
-    <button class="mob-btn" onclick="navigate('tiktok')" id="mob-tiktok"><span class="mob-icon">📱</span>TikTok</button>
+  <!-- LIBRARY -->
+  <div id="page-library" class="page" style="display:none">
+    <div class="lib-title">Your Library</div>
+    <div class="lib-sub">History, saved content & playlists</div>
+    <div class="lib-tabs">
+      <button class="libt on" onclick="sLibTab('history',this)">◷ History</button>
+      <button class="libt" onclick="sLibTab('favorites',this)">♡ Favorites</button>
+      <button class="libt" onclick="sLibTab('playlists',this)">≡ Playlists</button>
+    </div>
+    <div class="lib-pane on" id="lp-history"><div class="vgrid" id="lg-history"></div></div>
+    <div class="lib-pane" id="lp-favorites"><div class="vgrid" id="lg-fav"></div></div>
+    <div class="lib-pane" id="lp-playlists">
+      <div class="pl-create">
+        <input type="text" class="pl-inp" id="pl-name" placeholder="New playlist name…">
+        <button class="pl-btn" onclick="mkPl()">+ Create</button>
+      </div>
+      <div id="playlists-wrap"></div>
+    </div>
   </div>
+
+  <!-- TIKTOK -->
+  <div id="page-tiktok" class="page" style="display:none">
+    <div class="tt-card">
+      <div class="tt-icon-wrap">📱</div>
+      <div class="tt-title">TikTok Downloader</div>
+      <div class="tt-sub">Paste any TikTok URL to download without watermark</div>
+      <input type="url" class="tt-inp" id="tt-url" placeholder="https://www.tiktok.com/@user/video/…">
+      <button class="tt-btn" onclick="dlTT()">⬇ Download TikTok</button>
+      <div id="tt-status"></div>
+    </div>
+    <div style="margin-top:1.1rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.1rem">
+      <div style="font-size:.84rem;font-weight:700;color:var(--indigo3);margin-bottom:.6rem">How to get a TikTok URL</div>
+      <div style="font-size:.8rem;color:var(--text2);line-height:1.9">
+        1. Open TikTok and find the video<br>
+        2. Tap <strong>Share → Copy Link</strong><br>
+        3. Paste the link above and tap Download
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /body-wrap -->
+
+<!-- MOBILE NAV -->
+<div class="mob-nav">
+  <button class="mob-nb on" id="mn-home" onclick="nav('home')"><span class="mi">⌂</span>Home</button>
+  <button class="mob-nb" id="mn-reels" onclick="nav('reels')"><span class="mi">▶</span>Reels</button>
+  <button class="mob-nb" id="mn-search" onclick="focusSrch()"><span class="mi">⌕</span>Search</button>
+  <button class="mob-nb" id="mn-library" onclick="nav('library')"><span class="mi">≡</span>Library</button>
 </div>
 
-<!-- TOAST CONTAINER -->
-<div id="toast-container"></div>
+</div><!-- /app -->
+<div id="toasts"></div>
 
 <script>
-// ─────────────────────────────────────────────
-// STATE
-// ─────────────────────────────────────────────
-const BASE = 'https://bera-api.up.railway.app/api';
-let state = {
-  currentPage: 'home',
-  currentVideo: null,
-  searchResults: [],
-  searchQuery: '',
-  filterMode: 'all',
-  history: JSON.parse(localStorage.getItem('ss_history') || '[]'),
-  favorites: JSON.parse(localStorage.getItem('ss_favorites') || '[]'),
-  playlists: JSON.parse(localStorage.getItem('ss_playlists') || '[]'),
-  theme: localStorage.getItem('ss_theme') || 'dark',
+// ══════════════════════════════════════════════════════
+//  CONFIG
+// ══════════════════════════════════════════════════════
+const BERA   = 'https://bera-api.up.railway.app/api';
+// CORS proxy — wraps any URL so browser won't block it
+const PROXY  = 'https://api.allorigins.win/raw?url=';
+
+const TAGS = ['Trending 2024','Lo-fi chill','Hip hop','Movie trailers','Gaming','4K Nature','Comedy','Science','K-pop','Cooking'];
+
+// ══════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════
+const S = {
+  page: 'home',
+  video: null,
+  results: [],
+  query: '',
+  filter: 'all',
+  history:   load('ss_hist', []),
+  favorites: load('ss_fav',  []),
+  playlists: load('ss_pl',   []),
+  reelsLoaded: false,
+  reelsData: [],
+  likedReels: new Set(),
+  homeLoaded: false,
 };
 
-// Apply saved theme
-document.documentElement.setAttribute('data-theme', state.theme);
+function load(k, def) {
+  try { return JSON.parse(localStorage.getItem(k)) || def; } catch{ return def; }
+}
+function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch{} }
 
-// ─────────────────────────────────────────────
-// API
-// ─────────────────────────────────────────────
-async function apiCall(url) {
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
-  return r.json();
+// ══════════════════════════════════════════════════════
+//  API  —  all calls go through CORS proxy
+// ══════════════════════════════════════════════════════
+async function apiFetch(endpoint) {
+  const target = BERA + endpoint;
+  // Try direct first (works if deployed or CORS is open)
+  try {
+    const r = await fetch(target, { signal: AbortSignal.timeout(8000) });
+    if (r.ok) return r.json();
+  } catch(_) {}
+  // Fallback: CORS proxy
+  document.getElementById('cors-note').style.display = 'block';
+  const r2 = await fetch(PROXY + encodeURIComponent(target), { signal: AbortSignal.timeout(15000) });
+  if (!r2.ok) throw new Error(`HTTP ${r2.status}`);
+  const txt = await r2.text();
+  return JSON.parse(txt);
 }
 
-async function searchYT(query, limit = 20) {
-  return apiCall(`${BASE}/search/yts?query=${encodeURIComponent(query)}&limit=${limit}`);
-}
+const ytSearch  = (q,n=20) => apiFetch(`/search/yts?query=${enc(q)}&limit=${n}`);
+const lyricsAPI = (q)      => apiFetch(`/search/lyrics?query=${enc(q)}`);
+const wikiAPI   = (q)      => apiFetch(`/search/wiki?query=${enc(q)}`);
+const mp4API    = (u,q)    => apiFetch(`/download/ytmp4?url=${enc(u)}&quality=${q}`);
+const mp3API    = (u,q)    => apiFetch(`/download/ytmp3?url=${enc(u)}&quality=${q}`);
+const ttAPI     = (u)      => apiFetch(`/download/tiktok?url=${enc(u)}`);
+const enc       = s        => encodeURIComponent(s);
 
-async function fetchLyricsAPI(query) {
-  return apiCall(`${BASE}/search/lyrics?query=${encodeURIComponent(query)}`);
-}
-
-async function fetchWikiAPI(query) {
-  return apiCall(`${BASE}/search/wiki?query=${encodeURIComponent(query)}`);
-}
-
-async function downloadMP4API(url, quality) {
-  return apiCall(`${BASE}/download/ytmp4?url=${encodeURIComponent(url)}&quality=${quality}`);
-}
-
-async function downloadMP3API(url, quality) {
-  return apiCall(`${BASE}/download/ytmp3?url=${encodeURIComponent(url)}&quality=${quality}`);
-}
-
-async function downloadTiktokAPI(url) {
-  return apiCall(`${BASE}/download/tiktok?url=${encodeURIComponent(url)}`);
-}
-
-// ─────────────────────────────────────────────
-// NAVIGATION
-// ─────────────────────────────────────────────
-function navigate(page, subTab) {
+// ══════════════════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════════════════
+function nav(page, sub) {
   document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-  document.querySelectorAll('.mob-btn').forEach(b => b.classList.remove('active'));
+  ['sn-home','sn-reels','sn-library','sn-tiktok'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('on');
+  });
+  ['mn-home','mn-reels','mn-search','mn-library'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('on');
+  });
 
-  state.currentPage = page;
+  S.page = page;
   const pg = document.getElementById('page-' + page);
-  if (pg) pg.style.display = (page === 'video') ? 'grid' : 'block';
+  if (pg) pg.style.display = page === 'video' ? 'grid' : 'block';
 
-  const ni = document.getElementById('nav-' + page);
-  if (ni) ni.classList.add('active');
-  const mi = document.getElementById('mob-' + page);
-  if (mi) mi.classList.add('active');
+  const sn = document.getElementById('sn-' + page);
+  if (sn) sn.classList.add('on');
+  const mn = document.getElementById('mn-' + page);
+  if (mn) mn.classList.add('on');
 
-  if (page === 'library') {
-    renderLibrary();
-    if (subTab) switchLibTab(subTab, document.querySelector(`.lib-tab`));
-  }
-  if (page === 'home') renderHome();
+  if (page === 'home')    initHome();
+  if (page === 'library') { renderLib(); if (sub) sLibTabByName(sub); }
+  if (page === 'reels')   initReels();
 
-  window.scrollTo(0, 0);
+  document.getElementById('main').scrollTop = 0;
 }
 
-// ─────────────────────────────────────────────
-// THEME
-// ─────────────────────────────────────────────
-function toggleTheme() {
-  state.theme = state.theme === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', state.theme);
-  localStorage.setItem('ss_theme', state.theme);
-  document.querySelector('.icon-btn').textContent = state.theme === 'dark' ? '☀️' : '🌙';
+function focusSrch() {
+  document.getElementById('msearch').focus();
 }
 
-// ─────────────────────────────────────────────
-// SEARCH
-// ─────────────────────────────────────────────
-async function doSearch(query) {
-  query = query || document.getElementById('main-search').value.trim();
-  if (!query) return;
-  document.getElementById('main-search').value = query;
-  state.searchQuery = query;
-  navigate('search');
+// ══════════════════════════════════════════════════════
+//  SEARCH
+// ══════════════════════════════════════════════════════
+async function doSearch(q) {
+  q = q || document.getElementById('msearch').value.trim();
+  if (!q) return;
+  document.getElementById('msearch').value = q;
+  S.query = q; S.filter = 'all';
+  document.querySelectorAll('.fbtn').forEach((b,i) => b.classList.toggle('on', i===0));
+
+  // show search page
   document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
   document.getElementById('page-search').style.display = 'block';
+  S.page = 'search';
 
-  const grid = document.getElementById('search-results');
-  const stats = document.getElementById('search-stats');
-  grid.innerHTML = renderSkeletons(12);
-  stats.innerHTML = `Searching for "<strong>${escHtml(query)}</strong>"...`;
+  const grid  = document.getElementById('sresults');
+  const stats = document.getElementById('sstats');
+  grid.innerHTML = skels(16);
+  stats.innerHTML = `Searching <strong>"${esc(q)}"</strong>…`;
 
   try {
-    const data = await searchYT(query, 24);
-    let results = data.results || data.data || data || [];
-    if (!Array.isArray(results)) results = [];
-    state.searchResults = results;
-    renderSearchResults(results);
+    const d = await ytSearch(q, 24);
+    S.results = arr(d);
+    renderSearch();
   } catch(e) {
-    grid.innerHTML = `<div style="padding:2rem;color:var(--red)">⚠️ Search failed: ${e.message}. The Bera API may be unavailable or CORS is blocked in this browser context.</div>`;
-    stats.innerHTML = 'Error loading results';
-    showToast('Search failed — API may be unavailable', 'error');
+    grid.innerHTML = `
+      <div style="padding:2rem;color:var(--red);grid-column:1/-1">
+        <div style="font-size:1rem;font-weight:700;margin-bottom:.5rem">⚠️ Could not load results</div>
+        <div style="font-size:.84rem;color:var(--text2);line-height:1.7">${esc(e.message)}<br><br>
+        <strong style="color:var(--text)">Fix:</strong> The CORS proxy (allorigins.win) was also unreachable. Try:<br>
+        • Opening this file via a local server: <code style="background:var(--surface3);padding:.1rem .4rem;border-radius:4px">npx serve .</code><br>
+        • Or deploy to <strong>Vercel</strong> / <strong>Netlify</strong> for direct API access.
+        </div>
+      </div>`;
+    stats.innerHTML = 'Search failed';
+    toast('Search failed — see results area for fix', 'err');
   }
 }
 
-function renderSearchResults(results) {
-  const grid = document.getElementById('search-results');
-  const stats = document.getElementById('search-stats');
-
-  let filtered = results;
-  if (state.filterMode === 'short') filtered = results.filter(v => parseDuration(v.duration?.timestamp) < 240);
-  if (state.filterMode === 'long') filtered = results.filter(v => parseDuration(v.duration?.timestamp) > 1200);
-
-  stats.innerHTML = `Found <strong>${filtered.length}</strong> results for "<strong>${escHtml(state.searchQuery)}</strong>"`;
-
-  if (!filtered.length) {
-    grid.innerHTML = '<div class="empty-state"><span class="empty-icon">🔍</span><div class="empty-text">No results found</div></div>';
-    return;
-  }
-  grid.innerHTML = filtered.map(v => videoCardHTML(v)).join('');
+function renderSearch() {
+  const grid  = document.getElementById('sresults');
+  const stats = document.getElementById('sstats');
+  let list = S.results;
+  if (S.filter === 'short') list = list.filter(v => durSec(v) < 240);
+  if (S.filter === 'long')  list = list.filter(v => durSec(v) > 1200);
+  stats.innerHTML = `<strong>${list.length}</strong> results for "<strong style="color:var(--cyan2)">${esc(S.query)}</strong>"`;
+  grid.innerHTML = list.length
+    ? list.map(cardHTML).join('')
+    : '<div class="empty"><span class="empty-i">⌕</span>No results found</div>';
 }
 
-function setFilter(mode, btn) {
-  state.filterMode = mode;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  renderSearchResults(state.searchResults);
+function setF(m, btn) {
+  S.filter = m;
+  document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderSearch();
 }
 
-function parseDuration(ts) {
-  if (!ts) return 0;
-  const parts = ts.split(':').reverse();
-  return (parseInt(parts[0])||0) + (parseInt(parts[1])||0)*60 + (parseInt(parts[2])||0)*3600;
-}
-
-// ─────────────────────────────────────────────
-// VIDEO CARD HTML
-// ─────────────────────────────────────────────
-function videoCardHTML(v) {
-  const vid = v.videoId || v.id || '';
-  const title = escHtml(v.title || 'Untitled');
-  const author = escHtml(v.author?.name || v.channel || 'Unknown');
-  const views = formatViews(v.views || v.viewCount || 0);
-  const duration = v.duration?.timestamp || v.duration || '';
-  const thumb = v.thumbnail || v.thumbnails?.[0]?.url || '';
-  const ago = v.ago || v.publishedAt || '';
-
-  return `<div class="video-card" onclick="openVideo(${JSON.stringify(v).replace(/"/g,'&quot;')})">
-    <div class="card-thumb">
-      ${thumb ? `<img src="${thumb}" alt="${title}" loading="lazy" onerror="this.style.display='none';this.nextSibling.style.display='flex'">
-      <div class="card-thumb-placeholder" style="display:none">🎬</div>` : `<div class="card-thumb-placeholder">🎬</div>`}
-      ${duration ? `<div class="card-duration">${duration}</div>` : ''}
+// ══════════════════════════════════════════════════════
+//  VIDEO CARD
+// ══════════════════════════════════════════════════════
+function cardHTML(v) {
+  const t  = esc(v.title || 'Untitled');
+  const a  = esc(v.author?.name || v.channel || 'Unknown');
+  const vw = fmtV(v.views || 0);
+  const du = v.duration?.timestamp || '';
+  const th = v.thumbnail || '';
+  const ag = v.ago || '';
+  const vd = JSON.stringify(v).replace(/"/g, '&quot;');
+  return `<div class="vcard" onclick="openVid(${vd})">
+    <div class="vcard-thumb">
+      ${th
+        ? `<img src="${th}" alt="${t}" loading="lazy" onerror="this.parentNode.innerHTML='<div class=vcard-ph>▶</div>'">`
+        : '<div class="vcard-ph">▶</div>'}
+      ${du ? `<div class="vcard-dur">${du}</div>` : ''}
     </div>
-    <div class="card-body">
-      <div class="card-title">${title}</div>
-      <div class="card-meta">
-        <span class="card-author">${author}</span>
-        ${views ? `<span>${views}</span>` : ''}
-        ${ago ? `<span>${ago}</span>` : ''}
+    <div class="vcard-body">
+      <div class="vcard-title">${t}</div>
+      <div class="vcard-meta">
+        <span class="vcard-author">${a}</span>
+        ${vw ? `<span>${vw}</span>` : ''}
+        ${ag ? `<span>${ag}</span>` : ''}
       </div>
     </div>
   </div>`;
 }
 
-// ─────────────────────────────────────────────
-// OPEN VIDEO
-// ─────────────────────────────────────────────
-function openVideo(v) {
-  state.currentVideo = v;
+// ══════════════════════════════════════════════════════
+//  OPEN VIDEO
+// ══════════════════════════════════════════════════════
+function openVid(v) {
+  S.video = v;
+  S.history = [v, ...S.history.filter(h => h.videoId !== v.videoId)].slice(0, 60);
+  save('ss_hist', S.history);
 
-  // Add to history
-  const existing = state.history.findIndex(h => h.videoId === v.videoId);
-  if (existing > -1) state.history.splice(existing, 1);
-  state.history.unshift(v);
-  if (state.history.length > 50) state.history.pop();
-  localStorage.setItem('ss_history', JSON.stringify(state.history));
+  nav('video');
 
-  navigate('video');
+  document.getElementById('pbox').innerHTML =
+    `<iframe src="https://www.youtube.com/embed/${v.videoId}?autoplay=1&rel=0"
+      allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"
+      allowfullscreen></iframe>`;
 
-  // Populate video
-  const vidUrl = `https://www.youtube.com/watch?v=${v.videoId}`;
-  const thumb = v.thumbnail || '';
+  document.getElementById('vtitle').textContent  = v.title || 'Untitled';
+  document.getElementById('vauthor').textContent = v.author?.name || 'Unknown';
+  document.getElementById('vmeta').textContent   = `${fmtV(v.views || 0)} views · ${v.ago || ''}`;
+  document.getElementById('vava').textContent    = (v.author?.name || 'U')[0].toUpperCase();
+  document.getElementById('vdesc').textContent   = v.description || v.descriptionSnippet || 'No description available.';
+  document.getElementById('vdesc').classList.add('coll');
 
-  // Use YouTube embed
-  const pw = document.getElementById('player-wrap');
-  pw.innerHTML = `<iframe 
-    src="https://www.youtube.com/embed/${v.videoId}?autoplay=1&rel=0" 
-    style="width:100%;height:100%;border:none" 
-    allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share"
-    allowfullscreen>
-  </iframe>`;
+  const isFav = S.favorites.some(f => f.videoId === v.videoId);
+  document.getElementById('btn-fav').classList.toggle('on', isFav);
+  document.getElementById('btn-like').classList.remove('on');
 
-  document.getElementById('vid-title').textContent = v.title || 'Untitled';
-  document.getElementById('vid-author').textContent = v.author?.name || v.channel || 'Unknown';
-  document.getElementById('vid-views').textContent = `${formatViews(v.views || 0)} views • ${v.ago || ''}`;
-  document.getElementById('vid-desc').textContent = v.description || v.descriptionSnippet || 'No description available. Click "About" tab to load Wikipedia info.';
-  document.getElementById('author-avatar').textContent = (v.author?.name || 'U')[0].toUpperCase();
+  document.getElementById('lyrics-wrap').innerHTML = `
+    <div style="padding:2rem;text-align:center;color:var(--text3)">Load lyrics for this track</div>
+    <div style="text-align:center"><button class="abtn" onclick="loadLyrics()">♪ Fetch Lyrics</button></div>`;
+  document.getElementById('wiki-wrap').innerHTML = `
+    <div style="padding:2rem;text-align:center;color:var(--text3)">Load Wikipedia info</div>
+    <div style="text-align:center"><button class="abtn" onclick="loadWiki()">◎ Load Info</button></div>`;
 
-  // Favorite button state
-  const isFav = state.favorites.some(f => f.videoId === v.videoId);
-  document.getElementById('btn-fav').classList.toggle('active', isFav);
-
-  // Load related
+  swtab('dl', document.querySelector('.tbb'));
   loadRelated(v.author?.name || v.title || 'videos');
-
-  // Reset tabs
-  document.getElementById('lyrics-content').innerHTML = `
-    <div style="text-align:center;padding:2rem;color:var(--text3)">Load lyrics for this track</div>
-    <button class="action-btn" style="margin:0 auto;display:flex" onclick="fetchLyrics()">🎵 Fetch Lyrics</button>`;
-  document.getElementById('wiki-content').innerHTML = `
-    <div style="text-align:center;padding:2rem;color:var(--text3)">Load Wikipedia info</div>
-    <button class="action-btn" style="margin:0 auto;display:flex" onclick="fetchWiki()">📖 Load Info</button>`;
-
-  switchTab('download', document.querySelector('.tab-btn'));
 }
 
-async function loadRelated(query) {
-  const container = document.getElementById('related-videos');
-  container.innerHTML = '<div class="spinner" style="margin:1rem auto"></div>';
+async function loadRelated(q) {
+  const el = document.getElementById('related');
+  el.innerHTML = '<div class="spin" style="margin:1.5rem auto"></div>';
   try {
-    const data = await searchYT(query, 10);
-    const results = data.results || data.data || data || [];
-    if (!Array.isArray(results) || !results.length) { container.innerHTML = ''; return; }
-    container.innerHTML = results.slice(0,8).map(v => `
-      <div class="related-card" onclick="openVideo(${JSON.stringify(v).replace(/"/g,'&quot;')})">
-        <div class="related-thumb">
-          <img src="${v.thumbnail || ''}" alt="${escHtml(v.title||'')}" loading="lazy" onerror="this.style.display='none'">
+    const d = await ytSearch(q, 10);
+    const list = arr(d).slice(0, 8);
+    if (!list.length) { el.innerHTML = ''; return; }
+    el.innerHTML = list.map(v => `
+      <div class="rel-item" onclick="openVid(${JSON.stringify(v).replace(/"/g,'&quot;')})">
+        <div class="rel-thumb">
+          <img src="${v.thumbnail||''}" alt="" loading="lazy" onerror="this.style.display='none'">
         </div>
-        <div class="related-info">
-          <div class="related-t">${escHtml(v.title || 'Untitled')}</div>
-          <div class="related-m">${escHtml(v.author?.name || '')} • ${formatViews(v.views || 0)}</div>
+        <div class="rel-info">
+          <div class="rel-t">${esc(v.title||'Untitled')}</div>
+          <div class="rel-m">${esc(v.author?.name||'')} · ${fmtV(v.views||0)}</div>
         </div>
       </div>`).join('');
-  } catch(e) { container.innerHTML = '<div style="color:var(--text3);font-size:.8rem;padding:.5rem">Could not load related videos</div>'; }
+  } catch(e) {
+    el.innerHTML = '<div style="color:var(--text3);font-size:.8rem;padding:.5rem">Could not load related videos</div>';
+  }
 }
 
-// ─────────────────────────────────────────────
-// TABS
-// ─────────────────────────────────────────────
-function switchTab(id, btn) {
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  const panel = document.getElementById('tab-' + id);
-  if (panel) panel.classList.add('active');
-  if (btn) btn.classList.add('active');
+// ══════════════════════════════════════════════════════
+//  TABS
+// ══════════════════════════════════════════════════════
+function swtab(id, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.tbb').forEach(b => b.classList.remove('on'));
+  const p = document.getElementById('tp-' + id);
+  if (p) p.classList.add('on');
+  if (btn) btn.classList.add('on');
   else {
-    const b = document.querySelector(`.tab-btn[onclick*="${id}"]`);
-    if (b) b.classList.add('active');
+    const b = document.querySelector(`.tbb[onclick*="${id}"]`);
+    if (b) b.classList.add('on');
   }
 }
 
-// ─────────────────────────────────────────────
-// LYRICS
-// ─────────────────────────────────────────────
-async function fetchLyrics() {
-  if (!state.currentVideo) return;
-  const query = state.currentVideo.title || state.currentVideo.author?.name || '';
-  document.getElementById('lyrics-content').innerHTML = '<div class="spinner" style="margin:2rem auto"></div>';
+// ══════════════════════════════════════════════════════
+//  LYRICS / WIKI
+// ══════════════════════════════════════════════════════
+async function loadLyrics() {
+  if (!S.video) return;
+  document.getElementById('lyrics-wrap').innerHTML = '<div class="spin" style="margin:2rem auto"></div>';
   try {
-    const data = await fetchLyricsAPI(query);
-    const lyrics = data.lyrics || data.data?.lyrics || data.syncedLyrics?.map(l => l.text).join('\n') || data;
-    if (typeof lyrics === 'string' && lyrics.length > 10) {
-      document.getElementById('lyrics-content').innerHTML = `<div class="lyrics-content">${escHtml(lyrics)}</div>`;
+    const d   = await lyricsAPI(S.video.title || '');
+    const txt = d.lyrics || d.data?.lyrics || d.syncedLyrics?.map(l => l.text).join('\n') || '';
+    document.getElementById('lyrics-wrap').innerHTML = txt.length > 10
+      ? `<div class="lyrics-box">${esc(txt)}</div>`
+      : '<div style="padding:2rem;text-align:center;color:var(--text3)">Lyrics not found</div>';
+  } catch(e) {
+    document.getElementById('lyrics-wrap').innerHTML =
+      `<div style="color:var(--red);padding:2rem;text-align:center">${esc(e.message)}</div>`;
+  }
+}
+
+async function loadWiki() {
+  if (!S.video) return;
+  const q = S.video.author?.name || S.video.title || '';
+  document.getElementById('wiki-wrap').innerHTML = '<div class="spin" style="margin:2rem auto"></div>';
+  try {
+    const d   = await wikiAPI(q);
+    const txt = d.summary || d.extract || d.description || d.data?.extract || '';
+    const ttl = d.title || d.data?.title || q;
+    document.getElementById('wiki-wrap').innerHTML =
+      `<div class="wiki-box"><h3>${esc(ttl)}</h3><p>${esc(txt)}</p></div>`;
+  } catch(e) {
+    document.getElementById('wiki-wrap').innerHTML =
+      `<div style="color:var(--red);padding:2rem;text-align:center">${esc(e.message)}</div>`;
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  DOWNLOADS
+// ══════════════════════════════════════════════════════
+async function dlVid(type) {
+  if (!S.video) return;
+  const ytUrl = `https://www.youtube.com/watch?v=${S.video.videoId}`;
+  const q     = document.getElementById(type === 'mp4' ? 'qmp4' : 'qmp3').value;
+  const st    = document.getElementById('st-' + type);
+  st.className = 'dl-st loading';
+  st.textContent = `Fetching ${q} ${type.toUpperCase()}…`;
+  try {
+    const d   = type === 'mp4' ? await mp4API(ytUrl, q) : await mp3API(ytUrl, q);
+    const url = d.url || d.download?.url || d.link || d.data?.url || d.downloadUrl;
+    if (url) {
+      st.className = 'dl-st ok';
+      st.innerHTML = `✓ <a href="${url}" target="_blank" style="color:var(--green);font-weight:600">Click to Download</a>`;
+      toast(`${type.toUpperCase()} ready!`, 'ok');
     } else {
-      document.getElementById('lyrics-content').innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text3)">Lyrics not found for this track</div>';
+      st.className = 'dl-st err';
+      st.textContent = 'No URL in response';
+      toast('No download URL found in response', 'err');
     }
   } catch(e) {
-    document.getElementById('lyrics-content').innerHTML = `<div style="padding:2rem;text-align:center;color:var(--red)">Could not load lyrics: ${e.message}</div>`;
+    st.className = 'dl-st err';
+    st.textContent = `Failed: ${e.message}`;
+    toast(`Download failed: ${e.message}`, 'err');
   }
 }
 
-// ─────────────────────────────────────────────
-// WIKIPEDIA
-// ─────────────────────────────────────────────
-async function fetchWiki() {
-  if (!state.currentVideo) return;
-  const query = state.currentVideo.author?.name || state.currentVideo.title || '';
-  document.getElementById('wiki-content').innerHTML = '<div class="spinner" style="margin:2rem auto"></div>';
+async function dlTT() {
+  const url = document.getElementById('tt-url').value.trim();
+  if (!url) { toast('Enter a TikTok URL', 'err'); return; }
+  const st = document.getElementById('tt-status');
+  st.innerHTML = '<div class="spin" style="margin:0 auto"></div>';
   try {
-    const data = await fetchWikiAPI(query);
-    const summary = data.summary || data.extract || data.description || data.data?.extract || JSON.stringify(data).slice(0,500);
-    const title = data.title || data.data?.title || query;
-    document.getElementById('wiki-content').innerHTML = `
-      <div style="background:var(--surface);border-radius:var(--radius);padding:1.25rem">
-        <div style="font-size:1rem;font-weight:700;margin-bottom:.75rem">📖 ${escHtml(title)}</div>
-        <div style="font-size:.85rem;color:var(--text2);line-height:1.8">${escHtml(summary)}</div>
-      </div>`;
-  } catch(e) {
-    document.getElementById('wiki-content').innerHTML = `<div style="padding:2rem;text-align:center;color:var(--red)">Could not load Wikipedia: ${e.message}</div>`;
-  }
-}
-
-// ─────────────────────────────────────────────
-// DOWNLOADS
-// ─────────────────────────────────────────────
-async function downloadVideo(type) {
-  if (!state.currentVideo) return;
-  const vid = state.currentVideo;
-  const ytUrl = `https://www.youtube.com/watch?v=${vid.videoId}`;
-  const quality = document.getElementById(type === 'mp4' ? 'mp4-quality' : 'mp3-quality').value;
-  const statusEl = document.getElementById(`dl-${type}-status`);
-
-  statusEl.className = 'dl-status loading';
-  statusEl.textContent = `⏳ Fetching ${quality} ${type.toUpperCase()}...`;
-
-  try {
-    const data = type === 'mp4'
-      ? await downloadMP4API(ytUrl, quality)
-      : await downloadMP3API(ytUrl, quality);
-
-    const dlUrl = data.url || data.download?.url || data.link || data.data?.url || data.downloadUrl;
+    const d    = await ttAPI(url);
+    const dlUrl = d.url || d.download?.url || d.videoUrl || d.data?.url;
     if (dlUrl) {
-      statusEl.className = 'dl-status success';
-      statusEl.innerHTML = `✅ <a href="${dlUrl}" target="_blank" style="color:var(--green);font-weight:600">Click to Download</a>`;
-      showToast(`${type.toUpperCase()} ready! Click the link.`, 'success');
+      st.innerHTML = `<div style="color:var(--green);font-weight:600">✓ <a href="${dlUrl}" target="_blank" style="color:var(--green)">Download TikTok Video</a></div>`;
+      toast('TikTok ready!', 'ok');
     } else {
-      statusEl.className = 'dl-status error';
-      statusEl.textContent = '⚠️ No download URL returned';
-      showToast('Download URL not found in response', 'error');
+      st.innerHTML = `<div style="color:var(--yellow)">Response: ${esc(JSON.stringify(d).slice(0,120))}</div>`;
     }
   } catch(e) {
-    statusEl.className = 'dl-status error';
-    statusEl.textContent = `❌ Failed: ${e.message}`;
-    showToast(`Download failed: ${e.message}`, 'error');
+    st.innerHTML = `<div style="color:var(--red)">Failed: ${esc(e.message)}</div>`;
   }
 }
 
-async function downloadTiktok() {
-  const url = document.getElementById('tiktok-url').value.trim();
-  if (!url) { showToast('Please enter a TikTok URL', 'error'); return; }
-  const statusEl = document.getElementById('tiktok-status');
-  statusEl.innerHTML = '<div class="spinner" style="margin:0 auto"></div>';
+// ══════════════════════════════════════════════════════
+//  FAVORITES / LIKE / PLAYLIST
+// ══════════════════════════════════════════════════════
+function togFav() {
+  if (!S.video) return;
+  const i = S.favorites.findIndex(f => f.videoId === S.video.videoId);
+  if (i > -1) {
+    S.favorites.splice(i, 1);
+    document.getElementById('btn-fav').classList.remove('on');
+    toast('Removed from favorites', 'info');
+  } else {
+    S.favorites.unshift(S.video);
+    document.getElementById('btn-fav').classList.add('on');
+    toast('Saved to favorites ♡', 'ok');
+  }
+  save('ss_fav', S.favorites);
+}
 
+function togLike() {
+  const b = document.getElementById('btn-like');
+  b.classList.toggle('on');
+  toast(b.classList.contains('on') ? '♡ Liked!' : 'Unliked', 'info');
+}
+
+function addPl() {
+  if (!S.video) return;
+  if (!S.playlists.length) { toast('Create a playlist in Library first', 'info'); return; }
+  const names = S.playlists.map((p,i) => `${i+1}. ${p.name}`).join('\n');
+  const c = parseInt(prompt(`Add to which playlist?\n${names}\n\nEnter number:`))-1;
+  if (isNaN(c) || !S.playlists[c]) return;
+  if (!S.playlists[c].videos.some(v => v.videoId === S.video.videoId)) {
+    S.playlists[c].videos.push(S.video);
+    save('ss_pl', S.playlists);
+    toast(`Added to "${S.playlists[c].name}"`, 'ok');
+  } else {
+    toast('Already in this playlist', 'info');
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  LIBRARY
+// ══════════════════════════════════════════════════════
+function renderLib() {
+  const hg = document.getElementById('lg-history');
+  hg.innerHTML = S.history.length
+    ? S.history.map(cardHTML).join('')
+    : '<div class="empty"><span class="empty-i">◷</span>No history yet</div>';
+
+  const fg = document.getElementById('lg-fav');
+  fg.innerHTML = S.favorites.length
+    ? S.favorites.map(cardHTML).join('')
+    : '<div class="empty"><span class="empty-i">♡</span>No favorites yet</div>';
+
+  const pw = document.getElementById('playlists-wrap');
+  pw.innerHTML = S.playlists.length
+    ? S.playlists.map(pl => `
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.1rem;margin-bottom:.85rem">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
+            <div style="font-size:1rem;font-weight:700;color:var(--indigo3)">≡ ${esc(pl.name)}</div>
+            <div style="font-size:.74rem;color:var(--text3);font-family:var(--mono)">${pl.videos.length} videos</div>
+          </div>
+          ${pl.videos.length
+            ? `<div class="vgrid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr))">${pl.videos.map(cardHTML).join('')}</div>`
+            : '<div style="color:var(--text3);font-size:.82rem">No videos yet</div>'}
+        </div>`).join('')
+    : '<div class="empty"><span class="empty-i">≡</span>No playlists yet</div>';
+}
+
+function sLibTab(id, btn) {
+  document.querySelectorAll('.lib-pane').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.libt').forEach(b => b.classList.remove('on'));
+  const p = document.getElementById('lp-' + id);
+  if (p) p.classList.add('on');
+  if (btn) btn.classList.add('on');
+}
+
+function sLibTabByName(name) {
+  const map = { history: 0, favorites: 1, playlists: 2 };
+  const btns = document.querySelectorAll('.libt');
+  if (btns[map[name]]) sLibTab(name, btns[map[name]]);
+}
+
+function mkPl() {
+  const n = document.getElementById('pl-name').value.trim();
+  if (!n) { toast('Enter a playlist name', 'err'); return; }
+  S.playlists.push({ id: Date.now(), name: n, videos: [] });
+  save('ss_pl', S.playlists);
+  document.getElementById('pl-name').value = '';
+  renderLib();
+  toast(`Playlist "${n}" created!`, 'ok');
+}
+
+// ══════════════════════════════════════════════════════
+//  HOME
+// ══════════════════════════════════════════════════════
+function initHome() {
+  if (S.homeLoaded) return;
+  S.homeLoaded = true;
+  document.getElementById('htags').innerHTML =
+    TAGS.map(t => `<div class="tag" onclick="doSearch('${t}')">${t}</div>`).join('');
+  loadSection('g-trending', 'trending videos 2024', 8);
+  loadSection('g-music',    'popular music videos 2024', 8);
+  loadSection('g-gaming',   'gaming highlights 2024', 8);
+}
+
+async function loadSection(gid, q, n) {
+  const g = document.getElementById(gid);
+  g.innerHTML = skels(n);
   try {
-    const data = await downloadTiktokAPI(url);
-    const dlUrl = data.url || data.download?.url || data.videoUrl || data.data?.url;
-    if (dlUrl) {
-      statusEl.innerHTML = `<div style="color:var(--green);font-weight:600">✅ <a href="${dlUrl}" target="_blank" style="color:var(--green)">Download TikTok Video</a></div>`;
-      showToast('TikTok video ready!', 'success');
-    } else {
-      statusEl.innerHTML = `<div style="color:var(--yellow)">⚠️ Response received but no URL found. API response: ${JSON.stringify(data).slice(0,100)}</div>`;
-    }
+    const d    = await ytSearch(q, n);
+    const list = arr(d);
+    g.innerHTML = list.length
+      ? list.map(cardHTML).join('')
+      : '<div style="color:var(--text3);padding:1rem;font-size:.84rem">No results</div>';
   } catch(e) {
-    statusEl.innerHTML = `<div style="color:var(--red)">❌ Failed: ${e.message}</div>`;
-    showToast('TikTok download failed', 'error');
+    g.innerHTML = `<div style="color:var(--red);padding:1rem;font-size:.82rem;grid-column:1/-1">⚠️ ${esc(e.message)}</div>`;
   }
 }
 
-// ─────────────────────────────────────────────
-// FAVORITES & LIBRARY
-// ─────────────────────────────────────────────
-function toggleFavorite() {
-  if (!state.currentVideo) return;
-  const idx = state.favorites.findIndex(f => f.videoId === state.currentVideo.videoId);
-  if (idx > -1) {
-    state.favorites.splice(idx, 1);
-    document.getElementById('btn-fav').classList.remove('active');
-    showToast('Removed from favorites', 'info');
-  } else {
-    state.favorites.unshift(state.currentVideo);
-    document.getElementById('btn-fav').classList.add('active');
-    showToast('Added to favorites ❤️', 'success');
-  }
-  localStorage.setItem('ss_favorites', JSON.stringify(state.favorites));
-}
-
-function toggleLike() {
-  const btn = document.getElementById('btn-like');
-  btn.classList.toggle('active');
-  showToast(btn.classList.contains('active') ? '👍 Liked!' : 'Like removed', 'info');
-}
-
-function createPlaylist() {
-  const name = document.getElementById('playlist-name').value.trim();
-  if (!name) { showToast('Enter a playlist name', 'error'); return; }
-  state.playlists.push({ id: Date.now(), name, videos: [] });
-  localStorage.setItem('ss_playlists', JSON.stringify(state.playlists));
-  document.getElementById('playlist-name').value = '';
-  renderLibrary();
-  showToast(`Playlist "${name}" created!`, 'success');
-}
-
-function addToPlaylistPrompt() {
-  if (!state.currentVideo) return;
-  if (!state.playlists.length) {
-    showToast('Create a playlist in Library first', 'info'); return;
-  }
-  const names = state.playlists.map((p,i) => `${i+1}. ${p.name}`).join('\n');
-  const choice = prompt(`Add to playlist:\n${names}\n\nEnter number:`);
-  const idx = parseInt(choice) - 1;
-  if (isNaN(idx) || !state.playlists[idx]) return;
-  const pl = state.playlists[idx];
-  if (!pl.videos.some(v => v.videoId === state.currentVideo.videoId)) {
-    pl.videos.push(state.currentVideo);
-    localStorage.setItem('ss_playlists', JSON.stringify(state.playlists));
-    showToast(`Added to "${pl.name}"`, 'success');
-  } else {
-    showToast('Already in this playlist', 'info');
-  }
-}
-
-function switchLibTab(id, btn) {
-  document.querySelectorAll('.lib-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.lib-tab').forEach(b => b.classList.remove('active'));
-  const panel = document.getElementById('lib-' + id);
-  if (panel) panel.classList.add('active');
-  const btns = document.querySelectorAll('.lib-tab');
-  btns.forEach(b => { if (b.textContent.toLowerCase().includes(id.slice(0,4))) b.classList.add('active'); });
-}
-
-function renderLibrary() {
-  // History
-  const hg = document.getElementById('history-grid');
-  if (!state.history.length) {
-    hg.innerHTML = '<div class="empty-state"><span class="empty-icon">🕐</span><div class="empty-text">No watch history yet</div></div>';
-  } else {
-    hg.innerHTML = state.history.map(v => videoCardHTML(v)).join('');
-  }
-
-  // Favorites
-  const fg = document.getElementById('favorites-grid');
-  if (!state.favorites.length) {
-    fg.innerHTML = '<div class="empty-state"><span class="empty-icon">❤️</span><div class="empty-text">No favorites yet — heart a video to save it</div></div>';
-  } else {
-    fg.innerHTML = state.favorites.map(v => videoCardHTML(v)).join('');
-  }
-
-  // Playlists
-  const pg = document.getElementById('playlists-grid');
-  if (!state.playlists.length) {
-    pg.innerHTML = '<div class="empty-state"><span class="empty-icon">📂</span><div class="empty-text">No playlists yet — create one above</div></div>';
-  } else {
-    pg.innerHTML = state.playlists.map(pl => `
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:.75rem">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
-          <div style="font-weight:700">📂 ${escHtml(pl.name)}</div>
-          <div style="font-size:.75rem;color:var(--text3)">${pl.videos.length} videos</div>
-        </div>
-        ${pl.videos.length ? `<div class="video-grid" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))">${pl.videos.map(v => videoCardHTML(v)).join('')}</div>` : '<div style="color:var(--text3);font-size:.85rem">No videos yet</div>'}
-      </div>`).join('');
-  }
-}
-
-// ─────────────────────────────────────────────
-// HOME PAGE
-// ─────────────────────────────────────────────
-const TRENDING_TAGS = ['Trending music 2024','Gaming highlights','Movie trailers','Tutorial','Cooking','Science explained','Hip hop','Lo-fi beats'];
-
-async function renderHome() {
-  // Tags
-  const tags = document.getElementById('trending-tags');
-  tags.innerHTML = TRENDING_TAGS.map(t => `<div class="trend-tag" onclick="doSearch('${t}')">${t}</div>`).join('');
-
-  // Trending
-  loadSection('home-trending', 'trending videos 2024', 8);
-  loadSection('home-music', 'popular music videos 2024', 8);
-}
-
-async function loadSection(gridId, query, limit) {
-  const grid = document.getElementById(gridId);
-  grid.innerHTML = renderSkeletons(limit);
+// ══════════════════════════════════════════════════════
+//  REELS
+// ══════════════════════════════════════════════════════
+async function initReels() {
+  if (S.reelsLoaded) return;
+  S.reelsLoaded = true;
+  const cont = document.getElementById('reels-cont');
+  cont.innerHTML = `<div class="reel" style="display:flex;align-items:center;justify-content:center">
+    <div style="text-align:center;color:var(--indigo3)">
+      <div class="spin cyan" style="width:32px;height:32px;border-width:3px;margin:0 auto 1rem"></div>
+      <div style="font-size:.9rem">Loading Reels…</div>
+    </div>
+  </div>`;
   try {
-    const data = await searchYT(query, limit);
-    const results = data.results || data.data || data || [];
-    if (Array.isArray(results) && results.length) {
-      grid.innerHTML = results.map(v => videoCardHTML(v)).join('');
-    } else {
-      grid.innerHTML = '<div style="color:var(--text3);padding:1rem">No results</div>';
-    }
+    const queries = ['music video 2024','viral clips','trending shorts','dance music video'];
+    const q = queries[Math.floor(Math.random() * queries.length)];
+    const d = await ytSearch(q, 16);
+    S.reelsData = arr(d).filter(v => v.videoId);
+    if (!S.reelsData.length) throw new Error('No videos returned');
+    cont.innerHTML = S.reelsData.map((v,i) => reelHTML(v,i)).join('');
+
+    // IntersectionObserver: load iframe when reel scrolls into view
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        const reel = entry.target;
+        const iw   = reel.querySelector('.reel-iframe-wrap');
+        if (!iw) return;
+        if (entry.isIntersecting) {
+          if (!iw.querySelector('iframe')) {
+            const vid = reel.dataset.vid;
+            iw.innerHTML = `<iframe
+              src="https://www.youtube.com/embed/${vid}?autoplay=1&mute=1&loop=1&playlist=${vid}&controls=0&rel=0&modestbranding=1"
+              allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"
+              allowfullscreen></iframe>`;
+          }
+        } else {
+          iw.innerHTML = '';
+        }
+      });
+    }, { threshold: 0.65 });
+
+    cont.querySelectorAll('.reel').forEach(r => obs.observe(r));
   } catch(e) {
-    grid.innerHTML = `<div style="color:var(--red);padding:1rem;font-size:.85rem">⚠️ Could not load content — ${e.message}</div>`;
+    cont.innerHTML = `<div class="reel" style="display:flex;align-items:center;justify-content:center">
+      <div style="text-align:center;padding:2rem">
+        <div style="font-size:2rem;margin-bottom:.75rem">⚠️</div>
+        <div style="color:var(--red);font-weight:700;margin-bottom:.5rem">Could not load Reels</div>
+        <div style="color:var(--text2);font-size:.82rem;margin-bottom:1rem">${esc(e.message)}</div>
+        <button class="abtn" onclick="S.reelsLoaded=false;initReels()">Retry</button>
+      </div>
+    </div>`;
   }
 }
 
-function renderSkeletons(n) {
-  return Array(n).fill(0).map(() => `
+function reelHTML(v, i) {
+  const t   = esc(v.title || 'Untitled');
+  const a   = esc(v.author?.name || 'Unknown');
+  const vw  = fmtV(v.views || 0);
+  const ini = (v.author?.name || '?')[0].toUpperCase();
+  const th  = v.thumbnail || '';
+  const vd  = JSON.stringify(v).replace(/"/g, '&quot;');
+  return `<div class="reel" data-vid="${v.videoId}" data-idx="${i}">
+    <div class="reel-bg" style="background-image:url('${th}')"></div>
+    <div class="reel-topline"></div>
+    <div class="reel-player">
+      <div class="reel-iframe-wrap">
+        ${i === 0 ? `<iframe
+          src="https://www.youtube.com/embed/${v.videoId}?autoplay=1&mute=1&loop=1&playlist=${v.videoId}&controls=0&rel=0&modestbranding=1"
+          allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"
+          allowfullscreen></iframe>` : ''}
+      </div>
+      <div class="reel-click" onclick="openVid(${vd})" title="Open full video"></div>
+    </div>
+    <div class="reel-top-grad"></div>
+    <div class="reel-bot-grad"></div>
+    <div class="reel-info">
+      <div class="reel-author" onclick="openVid(${vd})">
+        <div class="reel-ava">${ini}</div>
+        <div class="reel-aname">${a}</div>
+      </div>
+      <div class="reel-caption">${t}</div>
+      <div class="reel-views">◎ ${vw} views</div>
+    </div>
+    <div class="reel-actions">
+      <div class="reel-act" id="rl-like-${i}" onclick="reelLike(${i},this)">
+        <div class="reel-act-icon">♡</div>
+        <div class="reel-act-lbl">Like</div>
+      </div>
+      <div class="reel-act" onclick="openVid(${vd})">
+        <div class="reel-act-icon">▶</div>
+        <div class="reel-act-lbl">Watch</div>
+      </div>
+      <div class="reel-act" onclick="reelSave(${vd})">
+        <div class="reel-act-icon">♡</div>
+        <div class="reel-act-lbl">Save</div>
+      </div>
+      <div class="reel-act" onclick="reelAudio(${vd})">
+        <div class="reel-act-icon">↓</div>
+        <div class="reel-act-lbl">Audio</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function reelLike(idx, el) {
+  const icon = el.querySelector('.reel-act-icon');
+  if (S.likedReels.has(idx)) {
+    S.likedReels.delete(idx); el.classList.remove('liked'); icon.textContent = '♡';
+    toast('Unliked', 'info');
+  } else {
+    S.likedReels.add(idx); el.classList.add('liked'); icon.textContent = '♥';
+    toast('♥ Liked!', 'ok');
+  }
+}
+function reelSave(v) {
+  if (!S.favorites.some(f => f.videoId === v.videoId)) {
+    S.favorites.unshift(v);
+    save('ss_fav', S.favorites);
+    toast('Saved to favorites ♡', 'ok');
+  } else {
+    toast('Already in favorites', 'info');
+  }
+}
+async function reelAudio(v) {
+  toast('Fetching audio…', 'info');
+  try {
+    const d   = await mp3API(`https://www.youtube.com/watch?v=${v.videoId}`, '192kbps');
+    const url = d.url || d.download?.url || d.link || d.data?.url;
+    if (url) { window.open(url, '_blank'); toast('Audio download ready!', 'ok'); }
+    else toast('No download URL in response', 'err');
+  } catch(e) { toast('Audio failed: ' + e.message, 'err'); }
+}
+
+// ══════════════════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════════════════
+function arr(d) {
+  if (Array.isArray(d)) return d;
+  if (d?.results && Array.isArray(d.results)) return d.results;
+  if (d?.data && Array.isArray(d.data)) return d.data;
+  return [];
+}
+function fmtV(n) {
+  if (!n) return '';
+  if (n >= 1e9) return (n/1e9).toFixed(1)+'B';
+  if (n >= 1e6) return (n/1e6).toFixed(1)+'M';
+  if (n >= 1e3) return (n/1e3).toFixed(1)+'K';
+  return String(n);
+}
+function durSec(v) {
+  const ts = v.duration?.timestamp || '';
+  if (!ts) return 0;
+  const p = ts.split(':').reverse();
+  return (parseInt(p[0])||0) + (parseInt(p[1])||0)*60 + (parseInt(p[2])||0)*3600;
+}
+function esc(s) {
+  return String(s||'')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function skels(n) {
+  return Array(n).fill(0).map(()=>`
     <div class="skel-card">
-      <div class="skel-thumb skeleton"></div>
-      <div class="skel-body">
-        <div class="skel-line skeleton" style="width:90%"></div>
-        <div class="skel-line skeleton skel-short"></div>
+      <div class="skel" style="aspect-ratio:16/9"></div>
+      <div style="padding:.85rem;display:flex;flex-direction:column;gap:.5rem">
+        <div class="skel" style="height:13px;width:90%"></div>
+        <div class="skel" style="height:11px;width:55%"></div>
       </div>
     </div>`).join('');
 }
-
-// ─────────────────────────────────────────────
-// UTILS
-// ─────────────────────────────────────────────
-function formatViews(n) {
-  if (!n) return '';
-  if (n >= 1e9) return (n/1e9).toFixed(1)+'B views';
-  if (n >= 1e6) return (n/1e6).toFixed(1)+'M views';
-  if (n >= 1e3) return (n/1e3).toFixed(1)+'K views';
-  return n+' views';
-}
-
-function escHtml(str) {
-  if (!str) return '';
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function showToast(msg, type = 'info') {
-  const tc = document.getElementById('toast-container');
-  const t = document.createElement('div');
+function toast(msg, type='info') {
+  const tc = document.getElementById('toasts');
+  const t  = document.createElement('div');
   t.className = `toast ${type}`;
-  const icons = { success: '✅', error: '❌', info: 'ℹ️' };
-  t.innerHTML = `<span>${icons[type]}</span><span>${escHtml(msg)}</span>`;
+  t.innerHTML = `<span>${{ok:'✓',err:'✗',info:'i'}[type]||'·'}</span><span>${esc(msg)}</span>`;
   tc.appendChild(t);
-  setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(20px)'; t.style.transition='all .3s'; setTimeout(() => t.remove(), 300); }, 3500);
+  setTimeout(()=>{ t.style.cssText='opacity:0;transform:translateX(14px);transition:all .3s'; setTimeout(()=>t.remove(),300); },3500);
 }
 
-// ─────────────────────────────────────────────
-// KEYBOARD SHORTCUTS
-// ─────────────────────────────────────────────
+// ══════════════════════════════════════════════════════
+//  KEYBOARD
+// ══════════════════════════════════════════════════════
 document.addEventListener('keydown', e => {
-  const tag = e.target.tagName.toLowerCase();
-  if (tag === 'input' || tag === 'textarea') return;
-  if (e.key === '/') {
-    e.preventDefault();
-    document.getElementById('main-search').focus();
-  }
+  if (['INPUT','TEXTAREA'].includes(e.target.tagName)) return;
+  if (e.key === '/') { e.preventDefault(); document.getElementById('msearch').focus(); }
 });
-
-document.getElementById('main-search').addEventListener('keydown', e => {
+document.getElementById('msearch').addEventListener('keydown', e => {
   if (e.key === 'Enter') doSearch();
   if (e.key === 'Escape') e.target.blur();
 });
 
-// ─────────────────────────────────────────────
-// INIT
-// ─────────────────────────────────────────────
-navigate('home');
+// ══════════════════════════════════════════════════════
+//  BOOT
+// ══════════════════════════════════════════════════════
+nav('home');
 </script>
 </body>
 </html>
